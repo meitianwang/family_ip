@@ -67,6 +67,45 @@ const (
 	SubscriptionStatusSuspended = "suspended"
 )
 
+// Payment order status constants
+const (
+	PaymentOrderStatusPending           = "pending"
+	PaymentOrderStatusPaid              = "paid"
+	PaymentOrderStatusRecharging        = "recharging"
+	PaymentOrderStatusCompleted         = "completed"
+	PaymentOrderStatusExpired           = "expired"
+	PaymentOrderStatusCancelled         = "cancelled"
+	PaymentOrderStatusFailed            = "failed"
+	PaymentOrderStatusRefundRequested   = "refund_requested"
+	PaymentOrderStatusRefunding         = "refunding"
+	PaymentOrderStatusPartiallyRefunded = "partially_refunded"
+	PaymentOrderStatusRefunded          = "refunded"
+	PaymentOrderStatusRefundFailed      = "refund_failed"
+)
+
+// Payment order type constants
+const (
+	PaymentOrderTypeBalance      = "balance"
+	PaymentOrderTypeSubscription = "subscription"
+)
+
+// Payment type constants
+const (
+	PaymentTypeAlipay       = "alipay"
+	PaymentTypeAlipayDirect = "alipay_direct"
+	PaymentTypeWxpay        = "wxpay"
+	PaymentTypeWxpayDirect  = "wxpay_direct"
+	PaymentTypeStripe       = "stripe"
+)
+
+// Payment provider key constants
+const (
+	PaymentProviderEasyPay = "easypay"
+	PaymentProviderAlipay  = "alipay"
+	PaymentProviderWxpay   = "wxpay"
+	PaymentProviderStripe  = "stripe"
+)
+
 // DefaultAntigravityModelMapping 是 Antigravity 平台的默认模型映射
 // 当账号未配置 model_mapping 时使用此默认值
 // 与前端 useModelWhitelist.ts 中的 antigravityDefaultMappings 保持一致

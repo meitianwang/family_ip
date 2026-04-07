@@ -17,6 +17,10 @@ const (
 	FieldKey = "key"
 	// FieldValue holds the string denoting the value field in the database.
 	FieldValue = "value"
+	// FieldSettingGroup holds the string denoting the setting_group field in the database.
+	FieldSettingGroup = "setting_group"
+	// FieldLabel holds the string denoting the label field in the database.
+	FieldLabel = "label"
 	// FieldUpdatedAt holds the string denoting the updated_at field in the database.
 	FieldUpdatedAt = "updated_at"
 	// Table holds the table name of the setting in the database.
@@ -28,6 +32,8 @@ var Columns = []string{
 	FieldID,
 	FieldKey,
 	FieldValue,
+	FieldSettingGroup,
+	FieldLabel,
 	FieldUpdatedAt,
 }
 
@@ -44,6 +50,12 @@ func ValidColumn(column string) bool {
 var (
 	// KeyValidator is a validator for the "key" field. It is called by the builders before save.
 	KeyValidator func(string) error
+	// DefaultSettingGroup holds the default value on creation for the "setting_group" field.
+	DefaultSettingGroup string
+	// SettingGroupValidator is a validator for the "setting_group" field. It is called by the builders before save.
+	SettingGroupValidator func(string) error
+	// LabelValidator is a validator for the "label" field. It is called by the builders before save.
+	LabelValidator func(string) error
 	// DefaultUpdatedAt holds the default value on creation for the "updated_at" field.
 	DefaultUpdatedAt func() time.Time
 	// UpdateDefaultUpdatedAt holds the default value on update for the "updated_at" field.
@@ -66,6 +78,16 @@ func ByKey(opts ...sql.OrderTermOption) OrderOption {
 // ByValue orders the results by the value field.
 func ByValue(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldValue, opts...).ToFunc()
+}
+
+// BySettingGroup orders the results by the setting_group field.
+func BySettingGroup(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldSettingGroup, opts...).ToFunc()
+}
+
+// ByLabel orders the results by the label field.
+func ByLabel(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldLabel, opts...).ToFunc()
 }
 
 // ByUpdatedAt orders the results by the updated_at field.

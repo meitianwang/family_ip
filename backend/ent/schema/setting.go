@@ -8,6 +8,7 @@ import (
 	"entgo.io/ent/dialect/entsql"
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/field"
+	"entgo.io/ent/schema/index"
 )
 
 // Setting holds the schema definition for the Setting entity.
@@ -39,6 +40,13 @@ func (Setting) Fields() []ent.Field {
 			SchemaType(map[string]string{
 				dialect.Postgres: "text",
 			}),
+		field.String("setting_group").
+			MaxLen(50).
+			Default("general"),
+		field.String("label").
+			MaxLen(200).
+			Optional().
+			Nillable(),
 		field.Time("updated_at").
 			Default(time.Now).
 			UpdateDefault(time.Now).
@@ -49,6 +57,7 @@ func (Setting) Fields() []ent.Field {
 }
 
 func (Setting) Indexes() []ent.Index {
-	// key 字段已在 Fields() 中声明 Unique()，无需额外索引
-	return nil
+	return []ent.Index{
+		index.Fields("setting_group"),
+	}
 }

@@ -64,6 +64,11 @@ func Value(v string) predicate.Setting {
 	return predicate.Setting(sql.FieldEQ(FieldValue, v))
 }
 
+// SettingGroup applies equality check predicate on the "setting_group" field. It's identical to SettingGroupEQ.
+func SettingGroup(v string) predicate.Setting {
+	return predicate.Setting(sql.FieldEQ(FieldSettingGroup, v))
+}
+
 // UpdatedAt applies equality check predicate on the "updated_at" field. It's identical to UpdatedAtEQ.
 func UpdatedAt(v time.Time) predicate.Setting {
 	return predicate.Setting(sql.FieldEQ(FieldUpdatedAt, v))
@@ -197,6 +202,146 @@ func ValueEqualFold(v string) predicate.Setting {
 // ValueContainsFold applies the ContainsFold predicate on the "value" field.
 func ValueContainsFold(v string) predicate.Setting {
 	return predicate.Setting(sql.FieldContainsFold(FieldValue, v))
+}
+
+// SettingGroupEQ applies the EQ predicate on the "setting_group" field.
+func SettingGroupEQ(v string) predicate.Setting {
+	return predicate.Setting(sql.FieldEQ(FieldSettingGroup, v))
+}
+
+// SettingGroupNEQ applies the NEQ predicate on the "setting_group" field.
+func SettingGroupNEQ(v string) predicate.Setting {
+	return predicate.Setting(sql.FieldNEQ(FieldSettingGroup, v))
+}
+
+// SettingGroupIn applies the In predicate on the "setting_group" field.
+func SettingGroupIn(vs ...string) predicate.Setting {
+	return predicate.Setting(sql.FieldIn(FieldSettingGroup, vs...))
+}
+
+// SettingGroupNotIn applies the NotIn predicate on the "setting_group" field.
+func SettingGroupNotIn(vs ...string) predicate.Setting {
+	return predicate.Setting(sql.FieldNotIn(FieldSettingGroup, vs...))
+}
+
+// SettingGroupGT applies the GT predicate on the "setting_group" field.
+func SettingGroupGT(v string) predicate.Setting {
+	return predicate.Setting(sql.FieldGT(FieldSettingGroup, v))
+}
+
+// SettingGroupGTE applies the GTE predicate on the "setting_group" field.
+func SettingGroupGTE(v string) predicate.Setting {
+	return predicate.Setting(sql.FieldGTE(FieldSettingGroup, v))
+}
+
+// SettingGroupLT applies the LT predicate on the "setting_group" field.
+func SettingGroupLT(v string) predicate.Setting {
+	return predicate.Setting(sql.FieldLT(FieldSettingGroup, v))
+}
+
+// SettingGroupLTE applies the LTE predicate on the "setting_group" field.
+func SettingGroupLTE(v string) predicate.Setting {
+	return predicate.Setting(sql.FieldLTE(FieldSettingGroup, v))
+}
+
+// SettingGroupContains applies the Contains predicate on the "setting_group" field.
+func SettingGroupContains(v string) predicate.Setting {
+	return predicate.Setting(sql.FieldContains(FieldSettingGroup, v))
+}
+
+// SettingGroupHasPrefix applies the HasPrefix predicate on the "setting_group" field.
+func SettingGroupHasPrefix(v string) predicate.Setting {
+	return predicate.Setting(sql.FieldHasPrefix(FieldSettingGroup, v))
+}
+
+// SettingGroupHasSuffix applies the HasSuffix predicate on the "setting_group" field.
+func SettingGroupHasSuffix(v string) predicate.Setting {
+	return predicate.Setting(sql.FieldHasSuffix(FieldSettingGroup, v))
+}
+
+// SettingGroupEqualFold applies the EqualFold predicate on the "setting_group" field.
+func SettingGroupEqualFold(v string) predicate.Setting {
+	return predicate.Setting(sql.FieldEqualFold(FieldSettingGroup, v))
+}
+
+// SettingGroupContainsFold applies the ContainsFold predicate on the "setting_group" field.
+func SettingGroupContainsFold(v string) predicate.Setting {
+	return predicate.Setting(sql.FieldContainsFold(FieldSettingGroup, v))
+}
+
+// LabelEQ applies the EQ predicate on the "label" field.
+func LabelEQ(v string) predicate.Setting {
+	return predicate.Setting(sql.FieldEQ(FieldLabel, v))
+}
+
+// LabelNEQ applies the NEQ predicate on the "label" field.
+func LabelNEQ(v string) predicate.Setting {
+	return predicate.Setting(sql.FieldNEQ(FieldLabel, v))
+}
+
+// LabelIn applies the In predicate on the "label" field.
+func LabelIn(vs ...string) predicate.Setting {
+	return predicate.Setting(sql.FieldIn(FieldLabel, vs...))
+}
+
+// LabelNotIn applies the NotIn predicate on the "label" field.
+func LabelNotIn(vs ...string) predicate.Setting {
+	return predicate.Setting(sql.FieldNotIn(FieldLabel, vs...))
+}
+
+// LabelGT applies the GT predicate on the "label" field.
+func LabelGT(v string) predicate.Setting {
+	return predicate.Setting(sql.FieldGT(FieldLabel, v))
+}
+
+// LabelGTE applies the GTE predicate on the "label" field.
+func LabelGTE(v string) predicate.Setting {
+	return predicate.Setting(sql.FieldGTE(FieldLabel, v))
+}
+
+// LabelLT applies the LT predicate on the "label" field.
+func LabelLT(v string) predicate.Setting {
+	return predicate.Setting(sql.FieldLT(FieldLabel, v))
+}
+
+// LabelLTE applies the LTE predicate on the "label" field.
+func LabelLTE(v string) predicate.Setting {
+	return predicate.Setting(sql.FieldLTE(FieldLabel, v))
+}
+
+// LabelContains applies the Contains predicate on the "label" field.
+func LabelContains(v string) predicate.Setting {
+	return predicate.Setting(sql.FieldContains(FieldLabel, v))
+}
+
+// LabelHasPrefix applies the HasPrefix predicate on the "label" field.
+func LabelHasPrefix(v string) predicate.Setting {
+	return predicate.Setting(sql.FieldHasPrefix(FieldLabel, v))
+}
+
+// LabelHasSuffix applies the HasSuffix predicate on the "label" field.
+func LabelHasSuffix(v string) predicate.Setting {
+	return predicate.Setting(sql.FieldHasSuffix(FieldLabel, v))
+}
+
+// LabelIsNil applies the IsNil predicate on the "label" field.
+func LabelIsNil() predicate.Setting {
+	return predicate.Setting(sql.FieldIsNull(FieldLabel))
+}
+
+// LabelNotNil applies the NotNil predicate on the "label" field.
+func LabelNotNil() predicate.Setting {
+	return predicate.Setting(sql.FieldNotNull(FieldLabel))
+}
+
+// LabelEqualFold applies the EqualFold predicate on the "label" field.
+func LabelEqualFold(v string) predicate.Setting {
+	return predicate.Setting(sql.FieldEqualFold(FieldLabel, v))
+}
+
+// LabelContainsFold applies the ContainsFold predicate on the "label" field.
+func LabelContainsFold(v string) predicate.Setting {
+	return predicate.Setting(sql.FieldContainsFold(FieldLabel, v))
 }
 
 // UpdatedAtEQ applies the EQ predicate on the "updated_at" field.

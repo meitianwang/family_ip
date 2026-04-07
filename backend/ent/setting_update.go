@@ -56,6 +56,40 @@ func (_u *SettingUpdate) SetNillableValue(v *string) *SettingUpdate {
 	return _u
 }
 
+// SetSettingGroup sets the "setting_group" field.
+func (_u *SettingUpdate) SetSettingGroup(v string) *SettingUpdate {
+	_u.mutation.SetSettingGroup(v)
+	return _u
+}
+
+// SetNillableSettingGroup sets the "setting_group" field if the given value is not nil.
+func (_u *SettingUpdate) SetNillableSettingGroup(v *string) *SettingUpdate {
+	if v != nil {
+		_u.SetSettingGroup(*v)
+	}
+	return _u
+}
+
+// SetLabel sets the "label" field.
+func (_u *SettingUpdate) SetLabel(v string) *SettingUpdate {
+	_u.mutation.SetLabel(v)
+	return _u
+}
+
+// SetNillableLabel sets the "label" field if the given value is not nil.
+func (_u *SettingUpdate) SetNillableLabel(v *string) *SettingUpdate {
+	if v != nil {
+		_u.SetLabel(*v)
+	}
+	return _u
+}
+
+// ClearLabel clears the value of the "label" field.
+func (_u *SettingUpdate) ClearLabel() *SettingUpdate {
+	_u.mutation.ClearLabel()
+	return _u
+}
+
 // SetUpdatedAt sets the "updated_at" field.
 func (_u *SettingUpdate) SetUpdatedAt(v time.Time) *SettingUpdate {
 	_u.mutation.SetUpdatedAt(v)
@@ -110,6 +144,16 @@ func (_u *SettingUpdate) check() error {
 			return &ValidationError{Name: "key", err: fmt.Errorf(`ent: validator failed for field "Setting.key": %w`, err)}
 		}
 	}
+	if v, ok := _u.mutation.SettingGroup(); ok {
+		if err := setting.SettingGroupValidator(v); err != nil {
+			return &ValidationError{Name: "setting_group", err: fmt.Errorf(`ent: validator failed for field "Setting.setting_group": %w`, err)}
+		}
+	}
+	if v, ok := _u.mutation.Label(); ok {
+		if err := setting.LabelValidator(v); err != nil {
+			return &ValidationError{Name: "label", err: fmt.Errorf(`ent: validator failed for field "Setting.label": %w`, err)}
+		}
+	}
 	return nil
 }
 
@@ -130,6 +174,15 @@ func (_u *SettingUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if value, ok := _u.mutation.Value(); ok {
 		_spec.SetField(setting.FieldValue, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.SettingGroup(); ok {
+		_spec.SetField(setting.FieldSettingGroup, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.Label(); ok {
+		_spec.SetField(setting.FieldLabel, field.TypeString, value)
+	}
+	if _u.mutation.LabelCleared() {
+		_spec.ClearField(setting.FieldLabel, field.TypeString)
 	}
 	if value, ok := _u.mutation.UpdatedAt(); ok {
 		_spec.SetField(setting.FieldUpdatedAt, field.TypeTime, value)
@@ -179,6 +232,40 @@ func (_u *SettingUpdateOne) SetNillableValue(v *string) *SettingUpdateOne {
 	if v != nil {
 		_u.SetValue(*v)
 	}
+	return _u
+}
+
+// SetSettingGroup sets the "setting_group" field.
+func (_u *SettingUpdateOne) SetSettingGroup(v string) *SettingUpdateOne {
+	_u.mutation.SetSettingGroup(v)
+	return _u
+}
+
+// SetNillableSettingGroup sets the "setting_group" field if the given value is not nil.
+func (_u *SettingUpdateOne) SetNillableSettingGroup(v *string) *SettingUpdateOne {
+	if v != nil {
+		_u.SetSettingGroup(*v)
+	}
+	return _u
+}
+
+// SetLabel sets the "label" field.
+func (_u *SettingUpdateOne) SetLabel(v string) *SettingUpdateOne {
+	_u.mutation.SetLabel(v)
+	return _u
+}
+
+// SetNillableLabel sets the "label" field if the given value is not nil.
+func (_u *SettingUpdateOne) SetNillableLabel(v *string) *SettingUpdateOne {
+	if v != nil {
+		_u.SetLabel(*v)
+	}
+	return _u
+}
+
+// ClearLabel clears the value of the "label" field.
+func (_u *SettingUpdateOne) ClearLabel() *SettingUpdateOne {
+	_u.mutation.ClearLabel()
 	return _u
 }
 
@@ -249,6 +336,16 @@ func (_u *SettingUpdateOne) check() error {
 			return &ValidationError{Name: "key", err: fmt.Errorf(`ent: validator failed for field "Setting.key": %w`, err)}
 		}
 	}
+	if v, ok := _u.mutation.SettingGroup(); ok {
+		if err := setting.SettingGroupValidator(v); err != nil {
+			return &ValidationError{Name: "setting_group", err: fmt.Errorf(`ent: validator failed for field "Setting.setting_group": %w`, err)}
+		}
+	}
+	if v, ok := _u.mutation.Label(); ok {
+		if err := setting.LabelValidator(v); err != nil {
+			return &ValidationError{Name: "label", err: fmt.Errorf(`ent: validator failed for field "Setting.label": %w`, err)}
+		}
+	}
 	return nil
 }
 
@@ -286,6 +383,15 @@ func (_u *SettingUpdateOne) sqlSave(ctx context.Context) (_node *Setting, err er
 	}
 	if value, ok := _u.mutation.Value(); ok {
 		_spec.SetField(setting.FieldValue, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.SettingGroup(); ok {
+		_spec.SetField(setting.FieldSettingGroup, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.Label(); ok {
+		_spec.SetField(setting.FieldLabel, field.TypeString, value)
+	}
+	if _u.mutation.LabelCleared() {
+		_spec.ClearField(setting.FieldLabel, field.TypeString)
 	}
 	if value, ok := _u.mutation.UpdatedAt(); ok {
 		_spec.SetField(setting.FieldUpdatedAt, field.TypeTime, value)

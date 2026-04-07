@@ -241,6 +241,22 @@ const (
 	SettingKeyEnableFingerprintUnification = "enable_fingerprint_unification"
 	// SettingKeyEnableMetadataPassthrough 是否透传客户端原始 metadata.user_id（默认 false）
 	SettingKeyEnableMetadataPassthrough = "enable_metadata_passthrough"
+
+	// =========================
+	// 支付系统设置 (Payment)
+	// =========================
+
+	SettingKeyPayOrderTimeoutMinutes    = "pay_order_timeout_minutes"     // 订单超时时间（分钟，默认 5）
+	SettingKeyPayMinRechargeAmount      = "pay_min_recharge_amount"       // 单笔最小充值金额
+	SettingKeyPayMaxRechargeAmount      = "pay_max_recharge_amount"       // 单笔最大充值金额
+	SettingKeyPayMaxDailyRechargeAmount = "pay_max_daily_recharge_amount" // 用户每日充值上限
+	SettingKeyPayProductName            = "pay_product_name"              // 支付商品名称
+	SettingKeyPayProviders              = "pay_providers"                 // 启用的支付渠道（逗号分隔: easypay,alipay,wxpay,stripe）
+	SettingKeyPayHelpImageURL           = "pay_help_image_url"            // 充值帮助图片 URL
+	SettingKeyPayHelpText               = "pay_help_text"                 // 充值帮助文本
+	SettingKeyPayMaxDailyAmountAlipay   = "pay_max_daily_amount_alipay"   // 支付宝全局日限额
+	SettingKeyPayMaxDailyAmountWxpay    = "pay_max_daily_amount_wxpay"    // 微信支付全局日限额
+	SettingKeyPayMaxDailyAmountStripe   = "pay_max_daily_amount_stripe"   // Stripe 全局日限额
 )
 
 // AdminAPIKeyPrefix is the prefix for admin API keys (distinct from user "sk-" keys).

@@ -21,6 +21,10 @@ type Setting struct {
 	Key string `json:"key,omitempty"`
 	// Value holds the value of the "value" field.
 	Value string `json:"value,omitempty"`
+	// SettingGroup holds the value of the "setting_group" field.
+	SettingGroup string `json:"setting_group,omitempty"`
+	// Label holds the value of the "label" field.
+	Label *string `json:"label,omitempty"`
 	// UpdatedAt holds the value of the "updated_at" field.
 	UpdatedAt    time.Time `json:"updated_at,omitempty"`
 	selectValues sql.SelectValues
@@ -33,7 +37,7 @@ func (*Setting) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case setting.FieldID:
 			values[i] = new(sql.NullInt64)
-		case setting.FieldKey, setting.FieldValue:
+		case setting.FieldKey, setting.FieldValue, setting.FieldSettingGroup, setting.FieldLabel:
 			values[i] = new(sql.NullString)
 		case setting.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
@@ -69,6 +73,19 @@ func (_m *Setting) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field value", values[i])
 			} else if value.Valid {
 				_m.Value = value.String
+			}
+		case setting.FieldSettingGroup:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field setting_group", values[i])
+			} else if value.Valid {
+				_m.SettingGroup = value.String
+			}
+		case setting.FieldLabel:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field label", values[i])
+			} else if value.Valid {
+				_m.Label = new(string)
+				*_m.Label = value.String
 			}
 		case setting.FieldUpdatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
@@ -117,6 +134,14 @@ func (_m *Setting) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("value=")
 	builder.WriteString(_m.Value)
+	builder.WriteString(", ")
+	builder.WriteString("setting_group=")
+	builder.WriteString(_m.SettingGroup)
+	builder.WriteString(", ")
+	if v := _m.Label; v != nil {
+		builder.WriteString("label=")
+		builder.WriteString(*v)
+	}
 	builder.WriteString(", ")
 	builder.WriteString("updated_at=")
 	builder.WriteString(_m.UpdatedAt.Format(time.ANSIC))

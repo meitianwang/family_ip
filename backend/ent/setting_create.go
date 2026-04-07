@@ -34,6 +34,34 @@ func (_c *SettingCreate) SetValue(v string) *SettingCreate {
 	return _c
 }
 
+// SetSettingGroup sets the "setting_group" field.
+func (_c *SettingCreate) SetSettingGroup(v string) *SettingCreate {
+	_c.mutation.SetSettingGroup(v)
+	return _c
+}
+
+// SetNillableSettingGroup sets the "setting_group" field if the given value is not nil.
+func (_c *SettingCreate) SetNillableSettingGroup(v *string) *SettingCreate {
+	if v != nil {
+		_c.SetSettingGroup(*v)
+	}
+	return _c
+}
+
+// SetLabel sets the "label" field.
+func (_c *SettingCreate) SetLabel(v string) *SettingCreate {
+	_c.mutation.SetLabel(v)
+	return _c
+}
+
+// SetNillableLabel sets the "label" field if the given value is not nil.
+func (_c *SettingCreate) SetNillableLabel(v *string) *SettingCreate {
+	if v != nil {
+		_c.SetLabel(*v)
+	}
+	return _c
+}
+
 // SetUpdatedAt sets the "updated_at" field.
 func (_c *SettingCreate) SetUpdatedAt(v time.Time) *SettingCreate {
 	_c.mutation.SetUpdatedAt(v)
@@ -83,6 +111,10 @@ func (_c *SettingCreate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (_c *SettingCreate) defaults() {
+	if _, ok := _c.mutation.SettingGroup(); !ok {
+		v := setting.DefaultSettingGroup
+		_c.mutation.SetSettingGroup(v)
+	}
 	if _, ok := _c.mutation.UpdatedAt(); !ok {
 		v := setting.DefaultUpdatedAt()
 		_c.mutation.SetUpdatedAt(v)
@@ -101,6 +133,19 @@ func (_c *SettingCreate) check() error {
 	}
 	if _, ok := _c.mutation.Value(); !ok {
 		return &ValidationError{Name: "value", err: errors.New(`ent: missing required field "Setting.value"`)}
+	}
+	if _, ok := _c.mutation.SettingGroup(); !ok {
+		return &ValidationError{Name: "setting_group", err: errors.New(`ent: missing required field "Setting.setting_group"`)}
+	}
+	if v, ok := _c.mutation.SettingGroup(); ok {
+		if err := setting.SettingGroupValidator(v); err != nil {
+			return &ValidationError{Name: "setting_group", err: fmt.Errorf(`ent: validator failed for field "Setting.setting_group": %w`, err)}
+		}
+	}
+	if v, ok := _c.mutation.Label(); ok {
+		if err := setting.LabelValidator(v); err != nil {
+			return &ValidationError{Name: "label", err: fmt.Errorf(`ent: validator failed for field "Setting.label": %w`, err)}
+		}
 	}
 	if _, ok := _c.mutation.UpdatedAt(); !ok {
 		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "Setting.updated_at"`)}
@@ -139,6 +184,14 @@ func (_c *SettingCreate) createSpec() (*Setting, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.Value(); ok {
 		_spec.SetField(setting.FieldValue, field.TypeString, value)
 		_node.Value = value
+	}
+	if value, ok := _c.mutation.SettingGroup(); ok {
+		_spec.SetField(setting.FieldSettingGroup, field.TypeString, value)
+		_node.SettingGroup = value
+	}
+	if value, ok := _c.mutation.Label(); ok {
+		_spec.SetField(setting.FieldLabel, field.TypeString, value)
+		_node.Label = &value
 	}
 	if value, ok := _c.mutation.UpdatedAt(); ok {
 		_spec.SetField(setting.FieldUpdatedAt, field.TypeTime, value)
@@ -220,6 +273,36 @@ func (u *SettingUpsert) UpdateValue() *SettingUpsert {
 	return u
 }
 
+// SetSettingGroup sets the "setting_group" field.
+func (u *SettingUpsert) SetSettingGroup(v string) *SettingUpsert {
+	u.Set(setting.FieldSettingGroup, v)
+	return u
+}
+
+// UpdateSettingGroup sets the "setting_group" field to the value that was provided on create.
+func (u *SettingUpsert) UpdateSettingGroup() *SettingUpsert {
+	u.SetExcluded(setting.FieldSettingGroup)
+	return u
+}
+
+// SetLabel sets the "label" field.
+func (u *SettingUpsert) SetLabel(v string) *SettingUpsert {
+	u.Set(setting.FieldLabel, v)
+	return u
+}
+
+// UpdateLabel sets the "label" field to the value that was provided on create.
+func (u *SettingUpsert) UpdateLabel() *SettingUpsert {
+	u.SetExcluded(setting.FieldLabel)
+	return u
+}
+
+// ClearLabel clears the value of the "label" field.
+func (u *SettingUpsert) ClearLabel() *SettingUpsert {
+	u.SetNull(setting.FieldLabel)
+	return u
+}
+
 // SetUpdatedAt sets the "updated_at" field.
 func (u *SettingUpsert) SetUpdatedAt(v time.Time) *SettingUpsert {
 	u.Set(setting.FieldUpdatedAt, v)
@@ -297,6 +380,41 @@ func (u *SettingUpsertOne) SetValue(v string) *SettingUpsertOne {
 func (u *SettingUpsertOne) UpdateValue() *SettingUpsertOne {
 	return u.Update(func(s *SettingUpsert) {
 		s.UpdateValue()
+	})
+}
+
+// SetSettingGroup sets the "setting_group" field.
+func (u *SettingUpsertOne) SetSettingGroup(v string) *SettingUpsertOne {
+	return u.Update(func(s *SettingUpsert) {
+		s.SetSettingGroup(v)
+	})
+}
+
+// UpdateSettingGroup sets the "setting_group" field to the value that was provided on create.
+func (u *SettingUpsertOne) UpdateSettingGroup() *SettingUpsertOne {
+	return u.Update(func(s *SettingUpsert) {
+		s.UpdateSettingGroup()
+	})
+}
+
+// SetLabel sets the "label" field.
+func (u *SettingUpsertOne) SetLabel(v string) *SettingUpsertOne {
+	return u.Update(func(s *SettingUpsert) {
+		s.SetLabel(v)
+	})
+}
+
+// UpdateLabel sets the "label" field to the value that was provided on create.
+func (u *SettingUpsertOne) UpdateLabel() *SettingUpsertOne {
+	return u.Update(func(s *SettingUpsert) {
+		s.UpdateLabel()
+	})
+}
+
+// ClearLabel clears the value of the "label" field.
+func (u *SettingUpsertOne) ClearLabel() *SettingUpsertOne {
+	return u.Update(func(s *SettingUpsert) {
+		s.ClearLabel()
 	})
 }
 
@@ -543,6 +661,41 @@ func (u *SettingUpsertBulk) SetValue(v string) *SettingUpsertBulk {
 func (u *SettingUpsertBulk) UpdateValue() *SettingUpsertBulk {
 	return u.Update(func(s *SettingUpsert) {
 		s.UpdateValue()
+	})
+}
+
+// SetSettingGroup sets the "setting_group" field.
+func (u *SettingUpsertBulk) SetSettingGroup(v string) *SettingUpsertBulk {
+	return u.Update(func(s *SettingUpsert) {
+		s.SetSettingGroup(v)
+	})
+}
+
+// UpdateSettingGroup sets the "setting_group" field to the value that was provided on create.
+func (u *SettingUpsertBulk) UpdateSettingGroup() *SettingUpsertBulk {
+	return u.Update(func(s *SettingUpsert) {
+		s.UpdateSettingGroup()
+	})
+}
+
+// SetLabel sets the "label" field.
+func (u *SettingUpsertBulk) SetLabel(v string) *SettingUpsertBulk {
+	return u.Update(func(s *SettingUpsert) {
+		s.SetLabel(v)
+	})
+}
+
+// UpdateLabel sets the "label" field to the value that was provided on create.
+func (u *SettingUpsertBulk) UpdateLabel() *SettingUpsertBulk {
+	return u.Update(func(s *SettingUpsert) {
+		s.UpdateLabel()
+	})
+}
+
+// ClearLabel clears the value of the "label" field.
+func (u *SettingUpsertBulk) ClearLabel() *SettingUpsertBulk {
+	return u.Update(func(s *SettingUpsert) {
+		s.ClearLabel()
 	})
 }
 
