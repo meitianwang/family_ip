@@ -405,6 +405,19 @@ func ProvideSettingService(settingRepo SettingRepository, groupRepo GroupReposit
 	return svc
 }
 
+// ProvidePaymentOrderExpiryService creates and starts PaymentOrderExpiryService.
+func ProvidePaymentOrderExpiryService(
+	orderRepo PaymentOrderRepository,
+	auditLogRepo PaymentAuditLogRepository,
+	registry *PaymentProviderRegistry,
+	instanceRepo PaymentProviderInstanceRepository,
+	encryptor SecretEncryptor,
+) *PaymentOrderExpiryService {
+	svc := NewPaymentOrderExpiryService(orderRepo, auditLogRepo, registry, instanceRepo, encryptor, 30*time.Second)
+	svc.Start()
+	return svc
+}
+
 // ProviderSet is the Wire provider set for all services
 var ProviderSet = wire.NewSet(
 	// Core services
@@ -490,4 +503,11 @@ var ProviderSet = wire.NewSet(
 	ProvideScheduledTestService,
 	ProvideScheduledTestRunnerService,
 	NewGroupCapacityService,
+
+	// Payment services
+	NewPaymentConfigService,
+	NewPaymentProviderRegistry,
+	NewPaymentLoadBalancer,
+	NewPaymentOrderService,
+	ProvidePaymentOrderExpiryService,
 )

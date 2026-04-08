@@ -257,6 +257,13 @@ const (
 	SettingKeyPayMaxDailyAmountAlipay   = "pay_max_daily_amount_alipay"   // 支付宝全局日限额
 	SettingKeyPayMaxDailyAmountWxpay    = "pay_max_daily_amount_wxpay"    // 微信支付全局日限额
 	SettingKeyPayMaxDailyAmountStripe   = "pay_max_daily_amount_stripe"   // Stripe 全局日限额
+
+	// Cancel rate limiting settings
+	SettingKeyPayCancelRateLimitEnabled    = "pay_cancel_rate_limit_enabled"     // 启用取消频率限制 ("true"/"false")
+	SettingKeyPayCancelRateLimitWindow     = "pay_cancel_rate_limit_window"      // 时间窗口大小 (默认 1)
+	SettingKeyPayCancelRateLimitUnit       = "pay_cancel_rate_limit_unit"        // 时间窗口单位: minute/hour/day (默认 day)
+	SettingKeyPayCancelRateLimitMax        = "pay_cancel_rate_limit_max"         // 窗口内最大取消次数 (默认 10)
+	SettingKeyPayCancelRateLimitWindowMode = "pay_cancel_rate_limit_window_mode" // 窗口模式: rolling/fixed (默认 rolling)
 )
 
 // AdminAPIKeyPrefix is the prefix for admin API keys (distinct from user "sk-" keys).
