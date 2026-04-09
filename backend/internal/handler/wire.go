@@ -33,6 +33,13 @@ func ProvideAdminHandlers(
 	tlsFingerprintProfileHandler *admin.TLSFingerprintProfileHandler,
 	apiKeyHandler *admin.AdminAPIKeyHandler,
 	scheduledTestHandler *admin.ScheduledTestHandler,
+	paymentOrderHandler *admin.PaymentOrderHandler,
+	paymentRefundHandler *admin.PaymentRefundHandler,
+	paymentConfigHandler *admin.PaymentConfigHandler,
+	paymentProviderInstanceHandler *admin.PaymentProviderInstanceHandler,
+	paymentChannelHandler *admin.PaymentChannelHandler,
+	paymentSubscriptionPlanHandler *admin.PaymentSubscriptionPlanHandler,
+	paymentDashboardHandler *admin.PaymentDashboardHandler,
 ) *AdminHandlers {
 	return &AdminHandlers{
 		Dashboard:             dashboardHandler,
@@ -59,6 +66,13 @@ func ProvideAdminHandlers(
 		TLSFingerprintProfile: tlsFingerprintProfileHandler,
 		APIKey:                apiKeyHandler,
 		ScheduledTest:         scheduledTestHandler,
+		PaymentOrder:            paymentOrderHandler,
+		PaymentRefund:           paymentRefundHandler,
+		PaymentConfig:           paymentConfigHandler,
+		PaymentProviderInstance: paymentProviderInstanceHandler,
+		PaymentChannel:          paymentChannelHandler,
+		PaymentSubscriptionPlan: paymentSubscriptionPlanHandler,
+		PaymentDashboard:        paymentDashboardHandler,
 	}
 }
 
@@ -88,6 +102,8 @@ func ProvideHandlers(
 	soraClientHandler *SoraClientHandler,
 	settingHandler *SettingHandler,
 	totpHandler *TotpHandler,
+	paymentHandler *PaymentHandler,
+	paymentWebhookHandler *PaymentWebhookHandler,
 	_ *service.IdempotencyCoordinator,
 	_ *service.IdempotencyCleanupService,
 ) *Handlers {
@@ -104,8 +120,10 @@ func ProvideHandlers(
 		OpenAIGateway: openaiGatewayHandler,
 		SoraGateway:   soraGatewayHandler,
 		SoraClient:    soraClientHandler,
-		Setting:       settingHandler,
-		Totp:          totpHandler,
+		Setting:        settingHandler,
+		Totp:           totpHandler,
+		Payment:        paymentHandler,
+		PaymentWebhook: paymentWebhookHandler,
 	}
 }
 
@@ -150,6 +168,17 @@ var ProviderSet = wire.NewSet(
 	admin.NewTLSFingerprintProfileHandler,
 	admin.NewAdminAPIKeyHandler,
 	admin.NewScheduledTestHandler,
+
+	// Payment handlers
+	NewPaymentHandler,
+	NewPaymentWebhookHandler,
+	admin.NewPaymentOrderHandler,
+	admin.NewPaymentRefundHandler,
+	admin.NewPaymentConfigHandler,
+	admin.NewPaymentProviderInstanceHandler,
+	admin.NewPaymentChannelHandler,
+	admin.NewPaymentSubscriptionPlanHandler,
+	admin.NewPaymentDashboardHandler,
 
 	// AdminHandlers and Handlers constructors
 	ProvideAdminHandlers,

@@ -149,7 +149,7 @@ func (lb *PaymentLoadBalancer) filterEligible(
 		limits := lb.parseInstanceLimits(inst.Limits, paymentType)
 		if limits != nil && limits.DailyLimit != nil && limits.DailyLimit.GreaterThan(decimal.Zero) {
 			used := usageMap[inst.ID] // zero value if not in map
-			if used.GreaterThanOrEqual(*limits.DailyLimit) {
+			if used.Add(amount).GreaterThan(*limits.DailyLimit) {
 				continue
 			}
 		}

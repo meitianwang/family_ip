@@ -4,6 +4,7 @@ import (
 	"context"
 	"crypto/rand"
 	"encoding/hex"
+	"encoding/json"
 	"fmt"
 	"log/slog"
 	"strconv"
@@ -57,6 +58,8 @@ type PaymentOrderRepository interface {
 	UpdatePaymentResult(ctx context.Context, id int64, tradeNo string, payURL, qrCode *string, instanceID *int64) error
 
 	CountPendingByUserID(ctx context.Context, userID int64) (int, error)
+	CountActiveByProviderInstanceID(ctx context.Context, instanceID int64) (int, error)
+	CountActiveByPlanID(ctx context.Context, planID int64) (int, error)
 	SumDailyPaidByUserID(ctx context.Context, userID int64, bizDayStart time.Time) (decimal.Decimal, error)
 	SumDailyPaidByPaymentType(ctx context.Context, paymentType string, bizDayStart time.Time) (decimal.Decimal, error)
 	SumDailyPaidByInstanceID(ctx context.Context, instanceID int64, bizDayStart time.Time) (decimal.Decimal, error)
@@ -65,6 +68,8 @@ type PaymentOrderRepository interface {
 
 	List(ctx context.Context, params pagination.PaginationParams) ([]PaymentOrder, *pagination.PaginationResult, error)
 	ListByUserID(ctx context.Context, userID int64, params pagination.PaginationParams) ([]PaymentOrder, *pagination.PaginationResult, error)
+	ListFiltered(ctx context.Context, filter PaymentOrderListFilter, params pagination.PaginationParams) ([]PaymentOrder, *pagination.PaginationResult, error)
+	GetDashboardStats(ctx context.Context, since time.Time) (*RawDashboardData, error)
 }
 
 // PaymentAuditLogRepository defines the data access interface for payment audit logs.
@@ -120,12 +125,20 @@ type PaymentConfigService struct {
 	settingService *SettingService
 	cache          atomic.Value // *cachedPaymentConfig
 	mu             sync.Mutex
+	fallbackSecret string // random per-process fallback for status access tokens
 }
 
 // NewPaymentConfigService creates a new PaymentConfigService.
 func NewPaymentConfigService(settingService *SettingService) *PaymentConfigService {
+	// Generate a random fallback secret so deployments without an admin API key
+	// don't all share the same hardcoded value.
+	b := make([]byte, 32)
+	if _, err := rand.Read(b); err != nil {
+		panic("crypto/rand unavailable: " + err.Error())
+	}
 	return &PaymentConfigService{
 		settingService: settingService,
+		fallbackSecret: hex.EncodeToString(b),
 	}
 }
 
@@ -192,7 +205,7 @@ func (s *PaymentConfigService) getDecimal(ctx context.Context, key string, fallb
 }
 
 func (s *PaymentConfigService) GetOrderTimeoutMinutes(ctx context.Context) int {
-	return s.getInt(ctx, SettingKeyPayOrderTimeoutMinutes, 5)
+	return s.getInt(ctx, SettingKeyPayOrderTimeoutMinutes, 30)
 }
 
 func (s *PaymentConfigService) GetMinRechargeAmount(ctx context.Context) decimal.Decimal {
@@ -200,11 +213,11 @@ func (s *PaymentConfigService) GetMinRechargeAmount(ctx context.Context) decimal
 }
 
 func (s *PaymentConfigService) GetMaxRechargeAmount(ctx context.Context) decimal.Decimal {
-	return s.getDecimal(ctx, SettingKeyPayMaxRechargeAmount, decimal.NewFromInt(1000))
+	return s.getDecimal(ctx, SettingKeyPayMaxRechargeAmount, decimal.NewFromInt(10000))
 }
 
 func (s *PaymentConfigService) GetMaxDailyRechargeAmount(ctx context.Context) decimal.Decimal {
-	return s.getDecimal(ctx, SettingKeyPayMaxDailyRechargeAmount, decimal.NewFromInt(10000))
+	return s.getDecimal(ctx, SettingKeyPayMaxDailyRechargeAmount, decimal.NewFromInt(100000))
 }
 
 func (s *PaymentConfigService) GetProductName(ctx context.Context) string {
@@ -242,6 +255,20 @@ func (s *PaymentConfigService) GetFeeRate(ctx context.Context, paymentType, prov
 		return d
 	}
 	return decimal.Zero
+}
+
+// GetStatusAccessSecret returns a secret used to sign order status access tokens.
+// Uses the admin API key from settings; falls back to a static default if not configured.
+func (s *PaymentConfigService) GetStatusAccessSecret(ctx context.Context) string {
+	key, err := s.settingService.GetAdminAPIKey(ctx)
+	if err == nil && key != "" {
+		return key
+	}
+	return s.fallbackSecret
+}
+
+func (s *PaymentConfigService) IsAutoRefundEnabled(ctx context.Context) bool {
+	return s.getString(ctx, "pay_auto_refund_enabled", "false") == "true"
 }
 
 func (s *PaymentConfigService) IsBalancePaymentDisabled(ctx context.Context) bool {
@@ -327,6 +354,31 @@ func (s *PaymentConfigService) InvalidateCache() {
 	s.cache.Store((*cachedPaymentConfig)(nil))
 }
 
+// UpdateSettings writes payment config keys and invalidates the cache.
+// Only keys with the "pay_" prefix are accepted.
+func (s *PaymentConfigService) UpdateSettings(ctx context.Context, configs map[string]string) error {
+	filtered := make(map[string]string, len(configs))
+	for k, v := range configs {
+		if !strings.HasPrefix(k, "pay_") {
+			continue
+		}
+		filtered[k] = v
+	}
+	if len(filtered) == 0 {
+		return nil
+	}
+	if err := s.settingService.settingRepo.SetMultiple(ctx, filtered); err != nil {
+		return fmt.Errorf("update payment settings: %w", err)
+	}
+	s.InvalidateCache()
+	return nil
+}
+
+// GetAllSettings returns all current pay_* settings as a map.
+func (s *PaymentConfigService) GetAllSettings(ctx context.Context) map[string]string {
+	return s.getAll(ctx)
+}
+
 // --- Request / Response types ---
 
 // CreateOrderRequest bundles all input for PaymentOrderService.CreateOrder.
@@ -357,6 +409,40 @@ type RefundOrderRequest struct {
 	Amount   decimal.Decimal
 	Reason   string
 	Operator string
+}
+
+// PaymentOrderListFilter holds filter criteria for admin order listing.
+type PaymentOrderListFilter struct {
+	UserID      *int64
+	Status      *string
+	OrderType   *string
+	PaymentType *string
+	DateFrom    *time.Time
+	DateTo      *time.Time
+}
+
+// RawDashboardData holds raw aggregation data from the repository.
+type RawDashboardData struct {
+	TodayAmount     decimal.Decimal
+	TodayOrderCount int
+	TotalAmount     decimal.Decimal
+	TotalOrderCount int
+	DailySeries     []DailySeriesPoint
+	PaymentMethods  []PaymentMethodStat
+}
+
+// DailySeriesPoint holds daily aggregated amounts and counts.
+type DailySeriesPoint struct {
+	Date   string          `json:"date"`
+	Amount decimal.Decimal `json:"amount"`
+	Count  int             `json:"count"`
+}
+
+// PaymentMethodStat holds per-payment-type aggregated data.
+type PaymentMethodStat struct {
+	PaymentType string          `json:"payment_type"`
+	Amount      decimal.Decimal `json:"amount"`
+	Count       int             `json:"count"`
 }
 
 // --- PaymentOrderService ---
@@ -631,7 +717,13 @@ func (s *PaymentOrderService) CreateOrder(ctx context.Context, req CreateOrderRe
 	order.ProviderInstanceID = instanceID
 
 	// 11. Write audit log
-	s.writeAuditLog(ctx, order.ID, "ORDER_CREATED", fmt.Sprintf("amount=%s, payAmount=%s, type=%s", orderAmount, payAmount, req.PaymentType))
+	auditDetail, _ := json.Marshal(map[string]interface{}{
+		"amount":      orderAmount.String(),
+		"payAmount":   payAmount.String(),
+		"paymentType": req.PaymentType,
+		"orderType":   req.OrderType,
+	})
+	s.writeAuditLog(ctx, order.ID, "ORDER_CREATED", string(auditDetail))
 
 	return &CreateOrderResult{
 		Order:        order,
@@ -848,16 +940,24 @@ func (s *PaymentOrderService) handleNotificationRetryFulfillment(ctx context.Con
 
 // executeFulfillment transitions an order through RECHARGING → COMPLETED (or FAILED).
 func (s *PaymentOrderService) executeFulfillment(ctx context.Context, orderID int64, order *PaymentOrder) error {
-	// CAS: PAID/FAILED → RECHARGING
-	ok, _ := s.orderRepo.UpdateStatusCAS(ctx, orderID, order.Status, domain.PaymentOrderStatusRecharging)
+	// Try all valid source statuses for RECHARGING transition to avoid stale-state issues.
+	// The order object may be stale by the time we reach here, so we attempt CAS from
+	// every status that is eligible for fulfillment (PAID, FAILED).
+	var ok bool
+	for _, fromStatus := range []string{domain.PaymentOrderStatusPaid, domain.PaymentOrderStatusFailed} {
+		ok, _ = s.orderRepo.UpdateStatusCAS(ctx, orderID, fromStatus, domain.PaymentOrderStatusRecharging)
+		if ok {
+			break
+		}
+	}
 	if !ok {
-		// Also try from PAID if current was FAILED, or vice versa
-		if order.Status == domain.PaymentOrderStatusFailed {
-			ok, _ = s.orderRepo.UpdateStatusCAS(ctx, orderID, domain.PaymentOrderStatusPaid, domain.PaymentOrderStatusRecharging)
-		}
-		if !ok {
-			return nil // another goroutine is handling it
-		}
+		return nil // another goroutine is handling it, or order is in a terminal state
+	}
+
+	// Re-fetch order to get current state after CAS succeeded
+	fresh, err := s.orderRepo.GetByID(ctx, orderID)
+	if err == nil {
+		order = fresh
 	}
 
 	// Fulfill the order
@@ -1036,6 +1136,20 @@ func (s *PaymentOrderService) RequestRefund(ctx context.Context, orderID, userID
 	operator := fmt.Sprintf("user:%d", userID)
 	s.writeAuditLogWithOperator(ctx, orderID, "REFUND_REQUESTED",
 		fmt.Sprintf("amount=%s, reason=%s", amount, reason), operator)
+
+	// Auto-process refund if enabled
+	if s.configService.IsAutoRefundEnabled(ctx) {
+		if err := s.RefundOrder(ctx, RefundOrderRequest{
+			OrderID:  orderID,
+			Amount:   amount,
+			Reason:   reason,
+			Operator: "auto:" + operator,
+		}); err != nil {
+			slog.Warn("auto-refund failed, awaiting admin action", "orderID", orderID, "error", err)
+			// Don't return error — order is already in REFUND_REQUESTED, admin can handle manually
+		}
+	}
+
 	return nil
 }
 
@@ -1107,6 +1221,20 @@ func (s *PaymentOrderService) restoreAfterRefundFailure(ctx context.Context, ord
 	}
 }
 
+// HasActiveOrdersForProviderInstance checks if there are PENDING/PAID/RECHARGING orders
+// using the given provider instance. Used to prevent unsafe credential changes or deletion.
+func (s *PaymentOrderService) HasActiveOrdersForProviderInstance(ctx context.Context, instanceID int64) (bool, error) {
+	count, err := s.orderRepo.CountActiveByProviderInstanceID(ctx, instanceID)
+	return count > 0, err
+}
+
+// HasActiveOrdersForPlan checks if there are PENDING/PAID/RECHARGING orders referencing
+// the given subscription plan. Used to prevent deletion of plans with in-flight orders.
+func (s *PaymentOrderService) HasActiveOrdersForPlan(ctx context.Context, planID int64) (bool, error) {
+	count, err := s.orderRepo.CountActiveByPlanID(ctx, planID)
+	return count > 0, err
+}
+
 // GetOrder gets an order by ID with optional user ownership check.
 func (s *PaymentOrderService) GetOrder(ctx context.Context, orderID int64) (*PaymentOrder, error) {
 	order, err := s.orderRepo.GetByID(ctx, orderID)
@@ -1119,6 +1247,30 @@ func (s *PaymentOrderService) GetOrder(ctx context.Context, orderID int64) (*Pay
 // ListUserOrders lists orders for a user with pagination.
 func (s *PaymentOrderService) ListUserOrders(ctx context.Context, userID int64, params pagination.PaginationParams) ([]PaymentOrder, *pagination.PaginationResult, error) {
 	return s.orderRepo.ListByUserID(ctx, userID, params)
+}
+
+// ListOrders lists orders with admin-level filters and pagination.
+func (s *PaymentOrderService) ListOrders(ctx context.Context, filter PaymentOrderListFilter, params pagination.PaginationParams) ([]PaymentOrder, *pagination.PaginationResult, error) {
+	return s.orderRepo.ListFiltered(ctx, filter, params)
+}
+
+// GetOrderWithAuditLogs retrieves an order and its audit logs.
+func (s *PaymentOrderService) GetOrderWithAuditLogs(ctx context.Context, orderID int64) (*PaymentOrder, []PaymentAuditLog, error) {
+	order, err := s.orderRepo.GetByID(ctx, orderID)
+	if err != nil {
+		return nil, nil, ErrPaymentOrderNotFound
+	}
+	logs, err := s.auditLogRepo.ListByOrderID(ctx, orderID)
+	if err != nil {
+		return nil, nil, fmt.Errorf("list audit logs: %w", err)
+	}
+	return order, logs, nil
+}
+
+// GetDashboardStats returns payment dashboard statistics.
+func (s *PaymentOrderService) GetDashboardStats(ctx context.Context, days int) (*RawDashboardData, error) {
+	since := time.Now().AddDate(0, 0, -days)
+	return s.orderRepo.GetDashboardStats(ctx, since)
 }
 
 // --- Internal helpers ---
@@ -1158,10 +1310,25 @@ func (s *PaymentOrderService) fulfillSubscriptionOrder(ctx context.Context, orde
 	if order.SubscriptionGroupID == nil || order.SubscriptionDays == nil {
 		return fmt.Errorf("missing subscription group or days")
 	}
+
+	validityDays := *order.SubscriptionDays
+
+	// For renewals, recalculate validity days from the active subscription's expiry date
+	// (matching TypeScript behavior where month-based plans compute calendar days from expiry).
+	if order.PlanID != nil {
+		activeSub, err := s.subscriptionService.GetActiveSubscription(ctx, order.UserID, *order.SubscriptionGroupID)
+		if err == nil && activeSub != nil {
+			plan, err := s.planRepo.GetByID(ctx, *order.PlanID)
+			if err == nil && plan != nil {
+				validityDays = computeValidityDays(plan.ValidityDays, plan.ValidityUnit, activeSub.ExpiresAt)
+			}
+		}
+	}
+
 	_, _, err := s.subscriptionService.AssignOrExtendSubscription(ctx, &AssignSubscriptionInput{
 		UserID:       order.UserID,
 		GroupID:      *order.SubscriptionGroupID,
-		ValidityDays: *order.SubscriptionDays,
+		ValidityDays: validityDays,
 		AssignedBy:   0,
 		Notes:        fmt.Sprintf("payment order #%d", order.ID),
 	})
@@ -1235,18 +1402,6 @@ func (s *PaymentOrderService) tryCancelAtProvider(ctx context.Context, order *Pa
 	}
 }
 
-func (s *PaymentOrderService) failOrder(ctx context.Context, orderID int64, reason string) error {
-	now := time.Now()
-	order, err := s.orderRepo.GetByID(ctx, orderID)
-	if err != nil {
-		return err
-	}
-	order.Status = domain.PaymentOrderStatusFailed
-	order.FailedAt = &now
-	order.FailedReason = &reason
-	return s.orderRepo.Update(ctx, order)
-}
-
 func (s *PaymentOrderService) buildPaymentSubject(ctx context.Context, order *PaymentOrder, plan *SubscriptionPlan) string {
 	if plan != nil {
 		if plan.ProductName != nil && *plan.ProductName != "" {
@@ -1260,10 +1415,29 @@ func (s *PaymentOrderService) buildPaymentSubject(ctx context.Context, order *Pa
 		}
 		return "Sub2API 订阅 " + plan.Name
 	}
-	prefix := s.configService.GetProductNamePrefix(ctx)
-	suffix := s.configService.GetProductNameSuffix(ctx)
-	name := s.configService.GetProductName(ctx)
-	return prefix + name + suffix
+
+	// Balance order: include the actual pay amount in the subject, matching TypeScript:
+	//   `${prefix || ''} ${payAmountStr} ${suffix || ''}`.trim()
+	payAmountStr := order.Amount.String()
+	if order.PayAmount != nil {
+		payAmountStr = order.PayAmount.String()
+	}
+
+	prefix := strings.TrimSpace(s.configService.GetProductNamePrefix(ctx))
+	suffix := strings.TrimSpace(s.configService.GetProductNameSuffix(ctx))
+
+	if prefix != "" || suffix != "" {
+		parts := make([]string, 0, 3)
+		if prefix != "" {
+			parts = append(parts, prefix)
+		}
+		parts = append(parts, payAmountStr)
+		if suffix != "" {
+			parts = append(parts, suffix)
+		}
+		return strings.Join(parts, " ")
+	}
+	return "Sub2API " + payAmountStr + " CNY"
 }
 
 func (s *PaymentOrderService) writeAuditLog(ctx context.Context, orderID int64, action, detail string) {
@@ -1297,14 +1471,18 @@ func generateRechargeCode(orderID int64) string {
 
 // computeValidityDays converts a validity value + unit to actual days.
 // Matches the TypeScript computeValidityDays: day=value, week=value*7, month=calendar diff.
-func computeValidityDays(value int, unit string) int {
+// The optional refDate controls the starting point for month calculations (defaults to now).
+func computeValidityDays(value int, unit string, refDate ...time.Time) int {
 	switch unit {
 	case "week":
 		return value * 7
 	case "month":
-		now := time.Now()
-		target := now.AddDate(0, value, 0)
-		return int(target.Sub(now).Hours()/24 + 0.5)
+		base := time.Now()
+		if len(refDate) > 0 && !refDate[0].IsZero() {
+			base = refDate[0]
+		}
+		target := base.AddDate(0, value, 0)
+		return int(target.Sub(base).Hours()/24 + 0.5)
 	default: // "day" or unrecognized
 		return value
 	}

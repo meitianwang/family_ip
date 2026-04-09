@@ -598,12 +598,19 @@ func getHeaderCaseInsensitive(headers map[string]string, key string) string {
 
 // parseUnixTimestamp parses a Unix timestamp string to time.Time.
 func parseUnixTimestamp(s string) (time.Time, error) {
+	if len(s) == 0 {
+		return time.Time{}, fmt.Errorf("empty timestamp")
+	}
+	const maxSafe = int64(9999999999999) // year 2286, well beyond any valid timestamp
 	var ts int64
 	for _, c := range s {
 		if c < '0' || c > '9' {
 			return time.Time{}, fmt.Errorf("invalid timestamp character: %c", c)
 		}
 		ts = ts*10 + int64(c-'0')
+		if ts > maxSafe {
+			return time.Time{}, fmt.Errorf("timestamp overflow")
+		}
 	}
 	return time.Unix(ts, 0), nil
 }

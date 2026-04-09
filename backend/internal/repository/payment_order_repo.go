@@ -175,6 +175,29 @@ func (r *paymentOrderRepository) CountPendingByUserID(ctx context.Context, userI
 		Count(ctx)
 }
 
+// activeOrderStatuses are the statuses that indicate an order is still in-flight.
+var activeOrderStatuses = []string{"pending", "paid", "recharging"}
+
+func (r *paymentOrderRepository) CountActiveByProviderInstanceID(ctx context.Context, instanceID int64) (int, error) {
+	client := clientFromContext(ctx, r.client)
+	return client.PaymentOrder.Query().
+		Where(
+			paymentorder.ProviderInstanceIDEQ(instanceID),
+			paymentorder.StatusIn(activeOrderStatuses...),
+		).
+		Count(ctx)
+}
+
+func (r *paymentOrderRepository) CountActiveByPlanID(ctx context.Context, planID int64) (int, error) {
+	client := clientFromContext(ctx, r.client)
+	return client.PaymentOrder.Query().
+		Where(
+			paymentorder.PlanIDEQ(planID),
+			paymentorder.StatusIn(activeOrderStatuses...),
+		).
+		Count(ctx)
+}
+
 // SumDailyPaidByUserID sums base recharge amounts (amount, not pay_amount) for user daily limit checks.
 // User-facing limits are denominated in recharge value, not the fee-inclusive amount charged at the gateway.
 func (r *paymentOrderRepository) SumDailyPaidByUserID(ctx context.Context, userID int64, bizDayStart time.Time) (decimal.Decimal, error) {
@@ -304,6 +327,137 @@ func (r *paymentOrderRepository) ListByUserID(ctx context.Context, userID int64,
 		Page:     params.Page,
 		PageSize: params.PageSize,
 	}, nil
+}
+
+func (r *paymentOrderRepository) ListFiltered(ctx context.Context, filter service.PaymentOrderListFilter, params pagination.PaginationParams) ([]service.PaymentOrder, *pagination.PaginationResult, error) {
+	client := clientFromContext(ctx, r.client)
+	query := client.PaymentOrder.Query().Order(dbent.Desc(paymentorder.FieldID))
+
+	if filter.UserID != nil {
+		query = query.Where(paymentorder.UserIDEQ(*filter.UserID))
+	}
+	if filter.Status != nil && *filter.Status != "" {
+		query = query.Where(paymentorder.StatusEQ(*filter.Status))
+	}
+	if filter.OrderType != nil && *filter.OrderType != "" {
+		query = query.Where(paymentorder.OrderTypeEQ(*filter.OrderType))
+	}
+	if filter.PaymentType != nil && *filter.PaymentType != "" {
+		query = query.Where(paymentorder.PaymentTypeEQ(*filter.PaymentType))
+	}
+	if filter.DateFrom != nil {
+		query = query.Where(paymentorder.CreatedAtGTE(*filter.DateFrom))
+	}
+	if filter.DateTo != nil {
+		query = query.Where(paymentorder.CreatedAtLTE(*filter.DateTo))
+	}
+
+	total, err := query.Clone().Count(ctx)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	ms, err := query.
+		Offset((params.Page - 1) * params.PageSize).
+		Limit(params.PageSize).
+		All(ctx)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return paymentOrdersToService(ms), &pagination.PaginationResult{
+		Total:    int64(total),
+		Page:     params.Page,
+		PageSize: params.PageSize,
+	}, nil
+}
+
+func (r *paymentOrderRepository) GetDashboardStats(ctx context.Context, since time.Time) (*service.RawDashboardData, error) {
+	now := time.Now()
+	// Use Asia/Shanghai timezone for business day
+	loc, err := time.LoadLocation("Asia/Shanghai")
+	if err != nil {
+		loc = time.FixedZone("CST", 8*3600)
+	}
+	todayStart := time.Date(now.In(loc).Year(), now.In(loc).Month(), now.In(loc).Day(), 0, 0, 0, 0, loc).UTC()
+
+	// Paid statuses used for revenue calculations (hardcoded, not user input).
+	paidStatusList := []any{"paid", "recharging", "completed", "refunding", "refunded", "refund_failed"}
+	statusPlaceholders := "$2, $3, $4, $5, $6, $7"
+
+	data := &service.RawDashboardData{}
+
+	// Today stats — $1=todayStart, $2..$7=statuses
+	todayArgs := append([]any{todayStart}, paidStatusList...)
+	row := r.sql.QueryRowContext(ctx,
+		"SELECT COALESCE(SUM(amount), 0), COUNT(*) FROM payment_orders WHERE paid_at >= $1 AND status IN ("+statusPlaceholders+")",
+		todayArgs...)
+	var todayAmountStr string
+	if err := row.Scan(&todayAmountStr, &data.TodayOrderCount); err != nil {
+		return nil, err
+	}
+	data.TodayAmount, _ = decimal.NewFromString(todayAmountStr)
+
+	// Total stats (since date)
+	sinceArgs := append([]any{since}, paidStatusList...)
+	row = r.sql.QueryRowContext(ctx,
+		"SELECT COALESCE(SUM(amount), 0), COUNT(*) FROM payment_orders WHERE paid_at >= $1 AND status IN ("+statusPlaceholders+")",
+		sinceArgs...)
+	var totalAmountStr string
+	if err := row.Scan(&totalAmountStr, &data.TotalOrderCount); err != nil {
+		return nil, err
+	}
+	data.TotalAmount, _ = decimal.NewFromString(totalAmountStr)
+
+	// Daily series
+	rows, err := r.sql.QueryContext(ctx,
+		`SELECT DATE(paid_at AT TIME ZONE 'Asia/Shanghai') as d, COALESCE(SUM(amount), 0), COUNT(*)
+		FROM payment_orders
+		WHERE paid_at >= $1 AND status IN (`+statusPlaceholders+`)
+		GROUP BY d ORDER BY d`,
+		sinceArgs...)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var pt service.DailySeriesPoint
+		var amtStr string
+		if err := rows.Scan(&pt.Date, &amtStr, &pt.Count); err != nil {
+			return nil, err
+		}
+		pt.Amount, _ = decimal.NewFromString(amtStr)
+		data.DailySeries = append(data.DailySeries, pt)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	// Payment methods breakdown
+	rows2, err := r.sql.QueryContext(ctx,
+		`SELECT payment_type, COALESCE(SUM(amount), 0), COUNT(*)
+		FROM payment_orders
+		WHERE paid_at >= $1 AND status IN (`+statusPlaceholders+`)
+		GROUP BY payment_type`,
+		sinceArgs...)
+	if err != nil {
+		return nil, err
+	}
+	defer rows2.Close()
+	for rows2.Next() {
+		var pm service.PaymentMethodStat
+		var amtStr string
+		if err := rows2.Scan(&pm.PaymentType, &amtStr, &pm.Count); err != nil {
+			return nil, err
+		}
+		pm.Amount, _ = decimal.NewFromString(amtStr)
+		data.PaymentMethods = append(data.PaymentMethods, pm)
+	}
+	if err := rows2.Err(); err != nil {
+		return nil, err
+	}
+
+	return data, nil
 }
 
 // --- helpers ---
