@@ -4246,19 +4246,6 @@ export default {
         hideCcsImportButton: 'Hide CCS Import Button',
         hideCcsImportButtonHint: 'When enabled, the "Import to CCS" button will be hidden on the API Keys page'
       },
-      purchase: {
-        title: 'Recharge / Subscription Page',
-        description: 'Show a "Recharge / Subscription" entry in the sidebar and open the configured URL in an iframe',
-        enabled: 'Show Recharge / Subscription Entry',
-        enabledHint: 'Only shown in standard mode (not simple mode)',
-        url: 'Recharge / Subscription URL',
-        urlPlaceholder: 'https://example.com/purchase',
-        urlHint: 'Must be an absolute http(s) URL',
-        iframeWarning:
-          '⚠️ iframe note: Some websites block embedding via X-Frame-Options or CSP (frame-ancestors). If the page is blank, provide an "Open in new tab" alternative.',
-        integrationDoc: 'Payment Integration Docs',
-        integrationDocHint: 'Covers endpoint specs, idempotency semantics, and code samples'
-      },
       soraClient: {
         title: 'Sora Client',
         description: 'Control whether to show the Sora client entry in the sidebar',
@@ -4707,13 +4694,7 @@ export default {
   // Recharge / Subscription Page
   purchase: {
     title: 'Recharge / Subscription',
-    description: 'Recharge balance or purchase subscription via the embedded page',
-    openInNewTab: 'Open in new tab',
-    notEnabledTitle: 'Feature not enabled',
-    notEnabledDesc: 'The administrator has not enabled the recharge/subscription entry. Please contact admin.',
-    notConfiguredTitle: 'Recharge / Subscription URL not configured',
-    notConfiguredDesc:
-      'The administrator enabled the entry but has not configured a recharge/subscription URL. Please contact admin.'
+    description: 'Recharge balance or purchase subscription'
   },
 
   // Custom Page (iframe embed)

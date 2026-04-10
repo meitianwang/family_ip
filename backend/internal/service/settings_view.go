@@ -39,8 +39,6 @@ type SystemSettings struct {
 	DocURL                      string
 	HomeContent                 string
 	HideCcsImportButton         bool
-	PurchaseSubscriptionEnabled bool
-	PurchaseSubscriptionURL     string
 	SoraClientEnabled           bool
 	CustomMenuItems             string // JSON array of custom menu items
 	CustomEndpoints             string // JSON array of custom endpoints
@@ -105,14 +103,12 @@ type PublicSettings struct {
 	HomeContent                      string
 	HideCcsImportButton              bool
 
-	PurchaseSubscriptionEnabled bool
-	PurchaseSubscriptionURL     string
-	SoraClientEnabled           bool
-	CustomMenuItems             string // JSON array of custom menu items
-	CustomEndpoints             string // JSON array of custom endpoints
+	SoraClientEnabled            bool
+	CustomMenuItems              string // JSON array of custom menu items
+	CustomEndpoints              string // JSON array of custom endpoints
 
-	LinuxDoOAuthEnabled bool
-	BackendModeEnabled  bool
+	LinuxDoOAuthEnabled          bool
+	BackendModeEnabled           bool
 	Version             string
 }
 

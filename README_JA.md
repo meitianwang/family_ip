@@ -64,7 +64,6 @@ Sub2API を拡張・統合するコミュニティプロジェクト:
 
 | プロジェクト | 説明 | 機能 |
 |---------|-------------|----------|
-| [Sub2ApiPay](https://github.com/touwaeriol/sub2apipay) | セルフサービス決済システム | セルフサービスによるチャージおよびサブスクリプション購入。YiPay プロトコル、WeChat Pay、Alipay、Stripe 対応。iframe での埋め込み可能 |
 | [sub2api-mobile](https://github.com/ckken/sub2api-mobile) | モバイル管理コンソール | ユーザー管理、アカウント管理、監視ダッシュボード、マルチバックエンド切り替えが可能なクロスプラットフォームアプリ（iOS/Android/Web）。Expo + React Native で構築 |
 
 ## 技術スタック

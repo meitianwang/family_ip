@@ -507,16 +507,12 @@ const userNavItems = computed((): NavItem[] => {
     ...(appStore.cachedPublicSettings?.sora_client_enabled
       ? [{ path: '/sora', label: t('nav.sora'), icon: SoraIcon }]
       : []),
-    ...(appStore.cachedPublicSettings?.purchase_subscription_enabled
-      ? [
-          {
-            path: '/purchase',
-            label: t('nav.buySubscription'),
-            icon: RechargeSubscriptionIcon,
-            hideInSimpleMode: true
-          }
-        ]
-      : []),
+    {
+      path: '/purchase',
+      label: t('nav.buySubscription'),
+      icon: RechargeSubscriptionIcon,
+      hideInSimpleMode: true
+    },
     { path: '/redeem', label: t('nav.redeem'), icon: GiftIcon, hideInSimpleMode: true },
     { path: '/profile', label: t('nav.profile'), icon: UserIcon },
     ...customMenuItemsForUser.value.map((item): NavItem => ({
@@ -538,16 +534,12 @@ const personalNavItems = computed((): NavItem[] => {
     ...(appStore.cachedPublicSettings?.sora_client_enabled
       ? [{ path: '/sora', label: t('nav.sora'), icon: SoraIcon }]
       : []),
-    ...(appStore.cachedPublicSettings?.purchase_subscription_enabled
-      ? [
-          {
-            path: '/purchase',
-            label: t('nav.buySubscription'),
-            icon: RechargeSubscriptionIcon,
-            hideInSimpleMode: true
-          }
-        ]
-      : []),
+    {
+      path: '/purchase',
+      label: t('nav.buySubscription'),
+      icon: RechargeSubscriptionIcon,
+      hideInSimpleMode: true
+    },
     { path: '/redeem', label: t('nav.redeem'), icon: GiftIcon, hideInSimpleMode: true },
     { path: '/profile', label: t('nav.profile'), icon: UserIcon },
     ...customMenuItemsForUser.value.map((item): NavItem => ({

@@ -1,5 +1,11 @@
 ﻿# ADMIN_PAYMENT_INTEGRATION_API
 
+> **⚠️ DEPRECATED / 已废弃**
+>
+> 支付系统已内置于 Sub2API，无需再对接外部支付服务。本文档仅供需要对接自定义外部支付系统的高级用户参考。
+>
+> The payment system is now built into Sub2API. There is no need to integrate an external payment service. This document is retained only for advanced users who want to integrate a custom external payment system.
+
 > 单文件中英双语文档 / Single-file bilingual documentation (Chinese + English)
 
 ---
@@ -7,7 +13,7 @@
 ## 中文
 
 ### 目标
-本文档用于对接外部支付系统（如 `sub2apipay`）与 Sub2API 的 Admin API，覆盖：
+本文档用于对接外部支付系统与 Sub2API 的 Admin API，覆盖：
 - 支付成功后充值
 - 用户查询
 - 人工余额修正
