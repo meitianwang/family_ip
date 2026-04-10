@@ -1633,3 +1633,154 @@ export interface UpdateScheduledTestPlanRequest {
   max_results?: number
   auto_recover?: boolean
 }
+
+// ==================== Payment Types ====================
+
+export interface UserPaymentOrder {
+  id: number
+  amount: string
+  pay_amount?: string
+  fee_rate?: string
+  status: string
+  payment_type: string
+  order_type: string
+  plan_id?: number
+  subscription_group_id?: number
+  subscription_days?: number
+  refund_amount?: string
+  refund_reason?: string
+  refund_at?: string
+  refund_requested_at?: string
+  refund_request_reason?: string
+  failed_reason?: string
+  expires_at: string
+  paid_at?: string
+  completed_at?: string
+  created_at: string
+}
+
+export interface CreateOrderRequest {
+  amount: string
+  payment_type: string
+  order_type?: string
+  plan_id?: number
+  return_url?: string
+  is_mobile?: boolean
+}
+
+export interface CreateOrderResponse {
+  order_id: number
+  amount: string
+  pay_amount: string
+  fee_rate: string
+  status: string
+  payment_type: string
+  order_type: string
+  pay_url?: string
+  qr_code?: string
+  client_secret?: string
+  expires_at: string
+  access_token?: string
+}
+
+export interface PaymentConfig {
+  enabled_payment_types: string[]
+  min_recharge_amount: string
+  max_recharge_amount: string
+  max_daily_recharge_amount: string
+  balance_payment_disabled: boolean
+  max_pending_orders: number
+  method_limits: MethodLimit[]
+}
+
+export interface MethodLimit {
+  payment_type: string
+  available: boolean
+  daily_limit: string
+  daily_used: string
+  remaining: string
+  single_min: string
+  single_max: string
+  fee_rate: string
+}
+
+export interface PaymentChannel {
+  id: number
+  group_id?: number
+  name: string
+  platform: string
+  rate_multiplier: string
+  description?: string
+  models?: string
+  features?: string
+  sort_order: number
+  enabled: boolean
+  created_at: string
+  updated_at: string
+}
+
+export interface PaymentSubscriptionPlan {
+  id: number
+  group_id?: number
+  name: string
+  description?: string
+  price: string
+  original_price?: string
+  validity_days: number
+  validity_unit: string
+  features?: string
+  product_name?: string
+  platform?: string
+  for_sale: boolean
+  sort_order: number
+  created_at: string
+  updated_at: string
+}
+
+export interface AdminPaymentOrder extends UserPaymentOrder {
+  user_id: number
+  user_email?: string
+  user_name?: string
+  recharge_code: string
+  payment_trade_no?: string
+  provider_instance_id?: number
+  src_host?: string
+  updated_at: string
+}
+
+export interface PaymentAuditLog {
+  id: number
+  order_id: number
+  action: string
+  detail?: string
+  operator?: string
+  created_at: string
+}
+
+export interface AdminOrderDetail {
+  order: AdminPaymentOrder
+  audit_logs: PaymentAuditLog[]
+}
+
+export interface PaymentDashboardData {
+  today_amount: string
+  today_order_count: number
+  total_amount: string
+  total_order_count: number
+  daily_series: Array<{ date: string; amount: string; count: number }>
+  payment_methods: Array<{ payment_type: string; amount: string; count: number }>
+}
+
+export interface PaymentProviderInstance {
+  id: number
+  provider_key: string
+  name: string
+  config: Record<string, string>
+  supported_types: string
+  enabled: boolean
+  sort_order: number
+  limits?: Record<string, { daily_limit?: string; single_min?: string; single_max?: string }>
+  refund_enabled: boolean
+  created_at: string
+  updated_at: string
+}

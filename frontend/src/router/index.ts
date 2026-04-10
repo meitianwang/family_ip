@@ -202,6 +202,17 @@ const routes: RouteRecordRaw[] = [
     }
   },
   {
+    path: '/purchase/orders',
+    name: 'PayOrders',
+    component: () => import('@/views/user/PayOrdersView.vue'),
+    meta: {
+      requiresAuth: true,
+      requiresAdmin: false,
+      title: 'Payment Orders',
+      titleKey: 'payment.orders.title'
+    }
+  },
+  {
     path: '/sora',
     name: 'Sora',
     component: () => import('@/views/user/SoraView.vue'),
@@ -350,6 +361,63 @@ const routes: RouteRecordRaw[] = [
       descriptionKey: 'admin.promo.description'
     }
   },
+  // ==================== Admin Payment Routes ====================
+  {
+    path: '/admin/payment',
+    name: 'AdminPaymentDashboard',
+    component: () => import('@/views/admin/PaymentDashboardView.vue'),
+    meta: {
+      requiresAuth: true,
+      requiresAdmin: true,
+      title: 'Payment Dashboard',
+      titleKey: 'payment.admin.dashboard'
+    }
+  },
+  {
+    path: '/admin/payment/orders',
+    name: 'AdminPaymentOrders',
+    component: () => import('@/views/admin/PaymentOrdersView.vue'),
+    meta: {
+      requiresAuth: true,
+      requiresAdmin: true,
+      title: 'Payment Orders',
+      titleKey: 'payment.admin.orders'
+    }
+  },
+  {
+    path: '/admin/payment/config',
+    name: 'AdminPaymentConfig',
+    component: () => import('@/views/admin/PaymentConfigView.vue'),
+    meta: {
+      requiresAuth: true,
+      requiresAdmin: true,
+      title: 'Payment Config',
+      titleKey: 'payment.admin.paymentConfig'
+    }
+  },
+  {
+    path: '/admin/payment/channels',
+    name: 'AdminPaymentChannels',
+    component: () => import('@/views/admin/PaymentChannelsView.vue'),
+    meta: {
+      requiresAuth: true,
+      requiresAdmin: true,
+      title: 'Payment Channels',
+      titleKey: 'payment.admin.channels'
+    }
+  },
+  {
+    path: '/admin/payment/plans',
+    name: 'AdminPaymentPlans',
+    component: () => import('@/views/admin/PaymentPlansView.vue'),
+    meta: {
+      requiresAuth: true,
+      requiresAdmin: true,
+      title: 'Subscription Plans',
+      titleKey: 'payment.admin.subscriptionPlans'
+    }
+  },
+
   {
     path: '/admin/settings',
     name: 'AdminSettings',
