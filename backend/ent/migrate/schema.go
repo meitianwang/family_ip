@@ -233,7 +233,7 @@ var (
 		{Name: "created_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamptz"}},
 		{Name: "updated_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamptz"}},
 		{Name: "name", Type: field.TypeString, Size: 100},
-		{Name: "platform", Type: field.TypeString, Size: 50, Default: "claude"},
+		{Name: "platform", Type: field.TypeString, Size: 50, Default: "default"},
 		{Name: "rate_multiplier", Type: field.TypeOther, SchemaType: map[string]string{"postgres": "decimal(10,4)"}},
 		{Name: "description", Type: field.TypeString, Nullable: true, SchemaType: map[string]string{"postgres": "text"}},
 		{Name: "models", Type: field.TypeString, Nullable: true, SchemaType: map[string]string{"postgres": "text"}},

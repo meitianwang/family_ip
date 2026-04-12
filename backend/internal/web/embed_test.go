@@ -476,7 +476,7 @@ func TestFrontendServer_Middleware(t *testing.T) {
 		})
 
 		w := httptest.NewRecorder()
-		req := httptest.NewRequest(http.MethodPost, "/responses/compact", strings.NewReader(`{"model":"gpt-5"}`))
+		req := httptest.NewRequest(http.MethodPost, "/responses/compact", strings.NewReader(`{"model":"test-model"}`))
 		req.Header.Set("Content-Type", "application/json")
 		router.ServeHTTP(w, req)
 

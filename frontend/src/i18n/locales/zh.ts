@@ -80,7 +80,7 @@ export default {
         stability: {
           feature: '服务稳定性',
           official: '单账号易触发限制',
-          us: '多账号池，自动切换'
+          us: '高可用，自动切换'
         },
         control: {
           feature: '用量控制',
@@ -123,16 +123,9 @@ export default {
     apply: '应用',
     used: '已使用',
     detailInfo: '详细信息',
-    tokenStats: 'Token 统计',
-    modelStats: '模型用量统计',
     // Table headers
     model: '模型',
     requests: '请求数',
-    inputTokens: '输入 Tokens',
-    outputTokens: '输出 Tokens',
-    cacheCreationTokens: '缓存创建',
-    cacheReadTokens: '缓存读取',
-    totalTokens: '总 Tokens',
     cost: '费用',
     // Status
     quotaMode: 'Key 限额模式',
@@ -155,21 +148,9 @@ export default {
     subscriptionExpires: '订阅到期',
     // Usage stat cells
     todayRequests: '今日请求',
-    todayInputTokens: '今日输入',
-    todayOutputTokens: '今日输出',
-    todayTokens: '今日 Tokens',
-    todayCacheCreation: '今日缓存创建',
-    todayCacheRead: '今日缓存读取',
     todayCost: '今日费用',
-    rpmTpm: 'RPM / TPM',
     totalRequests: '累计请求',
-    totalInputTokens: '累计输入',
-    totalOutputTokens: '累计输出',
-    totalTokensLabel: '累计 Tokens',
-    totalCacheCreation: '累计缓存创建',
-    totalCacheRead: '累计缓存读取',
     totalCost: '累计费用',
-    avgDuration: '平均耗时',
     // Messages
     enterApiKey: '请输入 API Key',
     querySuccess: '查询成功',
@@ -484,30 +465,6 @@ export default {
     apiKeys: 'API 密钥',
     todayRequests: '今日请求',
     todayCost: '今日消费',
-    todayTokens: '今日 Token',
-    totalTokens: '累计 Token',
-    cacheToday: '今日缓存',
-    performance: '性能指标',
-    avgResponse: '平均响应',
-    averageTime: '平均时间',
-    timeRange: '时间范围',
-    granularity: '粒度',
-    day: '按天',
-    hour: '按小时',
-    modelDistribution: '模型分布',
-    groupDistribution: '分组使用分布',
-    tokenUsageTrend: 'Token 使用趋势',
-    noDataAvailable: '暂无数据',
-    model: '模型',
-    group: '分组',
-    noGroup: '无分组',
-    requests: '请求',
-    tokens: 'Token',
-    actual: '实际',
-    standard: '标准',
-    input: '输入',
-    output: '输出',
-    cache: '缓存',
     recentUsage: '最近使用',
     last7Days: '近 7 天',
     noUsageRecords: '暂无使用记录',
@@ -594,40 +551,6 @@ export default {
       noGroupTitle: '请先分配分组',
       noGroupDescription:
         '此 API 密钥尚未分配分组，请先在密钥列表中点击分组列进行分配，然后才能查看使用配置。',
-      openai: {
-        description: '将以下配置文件添加到 Codex CLI 配置目录中。',
-        configTomlHint: '请确保以下内容位于 config.toml 文件的开头部分',
-        note: '请确保配置目录存在。macOS/Linux 用户可运行 mkdir -p ~/.codex 创建目录。',
-        noteWindows:
-          '按 Win+R，输入 %userprofile%\\.codex 打开配置目录。如目录不存在，请先手动创建。'
-      },
-      cliTabs: {
-        claudeCode: 'Claude Code',
-        geminiCli: 'Gemini CLI',
-        codexCli: 'Codex CLI',
-        codexCliWs: 'Codex CLI (WebSocket)',
-        opencode: 'OpenCode'
-      },
-      antigravity: {
-        description: '为 Antigravity 分组配置 API 访问。请根据您使用的客户端选择对应的配置方式。',
-        claudeCode: 'Claude Code',
-        geminiCli: 'Gemini CLI',
-        claudeNote:
-          '这些环境变量将在当前终端会话中生效。如需永久配置，请将其添加到 ~/.bashrc、~/.zshrc 或相应的配置文件中。',
-        geminiNote:
-          '这些环境变量将在当前终端会话中生效。如需永久配置，请将其添加到 ~/.bashrc、~/.zshrc 或相应的配置文件中。'
-      },
-      gemini: {
-        description:
-          '将以下环境变量添加到您的终端配置文件或直接在终端中运行，以配置 Gemini CLI 访问。',
-        modelComment: '如果你有 Gemini 3 权限可以填：gemini-3-pro-preview',
-        note: '这些环境变量将在当前终端会话中生效。如需永久配置，请将其添加到 ~/.bashrc、~/.zshrc 或相应的配置文件中。'
-      },
-      opencode: {
-        title: 'OpenCode 配置示例',
-        subtitle: 'opencode.json',
-        hint: '配置文件路径：~/.config/opencode/opencode.json（或 opencode.jsonc），不存在需手动创建。可使用默认 provider（openai/anthropic/google）或自定义 provider_id。API Key 支持直接配置或通过客户端 /connect 命令配置。示例仅供参考，模型与选项可按需调整。'
-      }
     },
     customKeyLabel: '自定义密钥',
     customKeyPlaceholder: '输入自定义密钥（至少16个字符）',
@@ -645,14 +568,6 @@ export default {
     ipRestrictionEnabled: '已配置 IP 限制',
     ccSwitchNotInstalled:
       'CC-Switch 未安装或协议处理程序未注册。请先安装 CC-Switch 或手动复制 API 密钥。',
-    ccsClientSelect: {
-      title: '选择客户端',
-      description: '请选择您要导入到 CC-Switch 的客户端类型：',
-      claudeCode: 'Claude Code',
-      claudeCodeDesc: '导入为 Claude Code 配置',
-      geminiCli: 'Gemini CLI',
-      geminiCliDesc: '导入为 Gemini CLI 配置'
-    },
     // 配额和有效期
     quotaLimit: '额度限制',
     quotaAmount: '额度金额 (USD)',
@@ -878,52 +793,20 @@ export default {
       users: '用户',
       totalUsers: '用户总数',
       activeUsers: '活跃用户',
-      accounts: '账号',
-      totalAccounts: '账号总数',
-      activeAccounts: '活跃账号',
       todayRequests: '今日请求',
       totalRequests: '总请求数',
       todayCost: '今日消费',
       totalCost: '总消费',
       actual: '实际',
       standard: '标准',
-      todayTokens: '今日 Token',
-      totalTokens: '总 Token',
-      input: '输入',
-      output: '输出',
-      cacheToday: '今日缓存',
-      performance: '性能指标',
-      avgResponse: '平均响应',
-      averageTime: '平均时间',
       timeRange: '时间范围',
       granularity: '粒度',
       day: '按天',
       hour: '按小时',
-      modelDistribution: '模型分布',
-      groupDistribution: '分组使用分布',
-      metricTokens: '按 Token',
-      metricActualCost: '按实际消费',
-      tokenUsageTrend: 'Token 使用趋势',
       noDataAvailable: '暂无数据',
-      model: '模型',
-      group: '分组',
-      noGroup: '无分组',
-      requests: '请求',
-      tokens: 'Token',
-      cache: '缓存',
       recentUsage: '最近使用',
-      viewModelDistribution: '模型分布',
-      viewSpendingRanking: '用户消费榜',
-      spendingRankingTitle: '用户消费榜',
-      spendingRankingUser: '用户',
-      spendingRankingRequests: '请求',
-      spendingRankingTokens: 'Token',
-      spendingRankingSpend: '消费',
-      spendingRankingOther: '其他',
-      spendingRankingUsage: '用量',
-      spendShort: '消费',
-      requestsShort: '请求',
-      tokensShort: 'Token',
+      failedToLoad: '加载仪表盘统计失败'
+    },
       last7Days: '近 7 天',
       noUsageRecords: '暂无使用记录',
       startUsingApi: '开始使用 API 后，使用历史将显示在这里。',
@@ -1354,8 +1237,6 @@ export default {
       failedToAdjust: '调整失败',
       emailRequired: '请输入邮箱',
       concurrencyMin: '并发数不能小于1',
-      soraStorageQuota: 'Sora 存储配额',
-      soraStorageQuotaHint: '单位 GB，0 表示使用分组或系统默认配额',
       amountRequired: '请输入有效金额',
       insufficientBalance: '余额不足',
       setAllowedGroups: '设置允许分组',
@@ -1562,11 +1443,6 @@ export default {
       rateMultiplierHint: '1.0 = 标准费率，0.5 = 半价，2.0 = 双倍',
       platforms: {
         all: '全部平台',
-        anthropic: 'Anthropic',
-        openai: 'OpenAI',
-        gemini: 'Gemini',
-        antigravity: 'Antigravity',
-        sora: 'Sora'
       },
       saving: '保存中...',
       noGroups: '暂无分组',
@@ -1636,86 +1512,6 @@ export default {
         validityHint: '分配给用户时订阅的有效天数',
         noLimit: '无限制'
       },
-      imagePricing: {
-        title: '图片生成计费',
-        description: '配置图片生成模型的图片生成价格，留空则使用默认价格'
-      },
-      soraPricing: {
-        title: 'Sora 按次计费',
-        description: '配置 Sora 图片/视频按次收费价格，留空则默认不计费',
-        image360: '图片 360px ($)',
-        image540: '图片 540px ($)',
-        video: '视频（标准）($)',
-        videoHd: '视频（Pro-HD）($)',
-        storageQuota: '存储配额',
-        storageQuotaHint: '单位 GB，设置该分组用户的 Sora 存储配额上限，0 表示使用系统默认'
-      },
-      claudeCode: {
-        title: 'Claude Code 客户端限制',
-        tooltip:
-          '启用后，此分组仅允许 Claude Code 官方客户端访问。非 Claude Code 请求将被拒绝或降级到指定分组。',
-        enabled: '仅限 Claude Code',
-        disabled: '允许所有客户端',
-        fallbackGroup: '降级分组',
-        fallbackHint: '非 Claude Code 请求将使用此分组，留空则直接拒绝',
-        noFallback: '不降级（直接拒绝）'
-      },
-      openaiMessages: {
-        title: 'OpenAI Messages 调度配置',
-        allowDispatch: '允许 /v1/messages 调度',
-        allowDispatchHint: '启用后，此 OpenAI 分组的 API Key 可以通过 /v1/messages 端点调度请求',
-        defaultModel: '默认映射模型',
-        defaultModelPlaceholder: '例如: gpt-4.1',
-        defaultModelHint: '当账号未配置模型映射时，所有请求模型将映射到此模型'
-      },
-      invalidRequestFallback: {
-        title: '无效请求兜底分组',
-        hint: '仅当上游明确返回 prompt too long 时才会触发，留空表示不兜底',
-        noFallback: '不兜底'
-      },
-      copyAccounts: {
-        title: '从分组复制账号',
-        tooltip: '选择一个或多个相同平台的分组，创建后会自动将这些分组的所有账号绑定到新分组（去重）。',
-        tooltipEdit: '选择一个或多个相同平台的分组，保存后当前分组的账号会被替换为这些分组的账号（去重）。',
-        selectPlaceholder: '选择分组以复制其账号...',
-        hint: '可选多个分组，账号会自动去重',
-        hintEdit: '⚠️ 注意：这会替换当前分组的所有账号绑定'
-      },
-      modelRouting: {
-        title: '模型路由配置',
-        tooltip:
-          '配置特定模型请求优先路由到指定账号。支持通配符匹配，如 claude-opus-* 匹配所有 opus 模型。',
-        enabled: '已启用',
-        disabled: '已禁用',
-        disabledHint: '启用后，配置的路由规则才会生效',
-        addRule: '添加路由规则',
-        modelPattern: '模型模式',
-        modelPatternPlaceholder: 'claude-opus-*',
-        modelPatternHint: '支持 * 通配符，如 claude-opus-* 匹配所有 opus 模型',
-        accounts: '优先账号',
-        selectAccounts: '选择账号',
-        noAccounts: '此分组暂无账号',
-        loadingAccounts: '加载账号中...',
-        removeRule: '删除规则',
-        noRules: '暂无路由规则',
-        noRulesHint: '添加路由规则以将特定模型请求优先路由到指定账号',
-        searchAccountPlaceholder: '搜索账号...',
-        accountsHint: '选择此模型模式优先使用的账号'
-      },
-      mcpXml: {
-        title: 'MCP XML 协议注入',
-        tooltip: '启用后，当请求包含 MCP 工具时，会在 system prompt 中注入 XML 格式调用协议提示词。关闭此选项可避免对某些客户端造成干扰。',
-        enabled: '已启用',
-        disabled: '已禁用'
-      },
-      supportedScopes: {
-        title: '支持的模型系列',
-        tooltip: '选择此分组支持的模型系列。未勾选的系列将不会被路由到此分组。',
-        claude: 'Claude',
-        geminiText: 'Gemini Text',
-        geminiImage: 'Gemini Image',
-        hint: '至少选择一个模型系列'
-      }
     },
 
     // Subscriptions Management
@@ -2075,10 +1871,8 @@ export default {
         general: '通用设置',
         security: '安全与认证',
         users: '用户默认值',
-        gateway: '网关服务',
         email: '邮件设置',
         backup: '数据备份',
-        data: 'Sora 存储',
       },
       emailTabDisabledTitle: '邮箱验证未启用',
       emailTabDisabledHint: '请在「安全与认证」选项卡中启用邮箱验证后，再配置 SMTP 设置。',
@@ -2154,30 +1948,6 @@ export default {
         subscriptionGroup: '订阅分组',
         subscriptionValidityDays: '有效期（天）'
       },
-      claudeCode: {
-        title: 'Claude Code 设置',
-        description: '控制 Claude Code 客户端访问要求',
-        minVersion: '最低版本号',
-        minVersionPlaceholder: '例如 2.1.63',
-        minVersionHint: '拒绝低于此版本的 Claude Code 客户端请求（semver 格式）。留空则不检查版本。',
-        maxVersion: '最高版本号',
-        maxVersionPlaceholder: '例如 2.5.0',
-        maxVersionHint: '拒绝高于此版本的 Claude Code 客户端请求（semver 格式）。留空则不限制最高版本。'
-      },
-      scheduling: {
-        title: '网关调度设置',
-        description: '控制 API Key 的调度行为',
-        allowUngroupedKey: '允许未分组 Key 调度',
-        allowUngroupedKeyHint: '关闭后，未分配到任何分组的 API Key 将无法发起请求（返回 403）。建议保持关闭以确保所有 Key 都归属明确的分组。'
-      },
-      gatewayForwarding: {
-        title: '请求转发行为',
-        description: '控制请求转发到上游 OAuth 账号时的行为',
-        fingerprintUnification: '指纹统一化',
-        fingerprintUnificationHint: '统一共享同一 OAuth 账号的用户的 X-Stainless-* 请求头。关闭后透传客户端原始请求头。',
-        metadataPassthrough: 'Metadata 透传',
-        metadataPassthroughHint: '透传客户端原始 metadata.user_id，不进行重写。可能提高上游缓存命中率。',
-      },
       site: {
         title: '站点设置',
         description: '自定义站点品牌',
@@ -2227,12 +1997,6 @@ export default {
           '⚠️ iframe 模式提示：部分网站设置了 X-Frame-Options 或 CSP 安全策略，禁止被嵌入到 iframe 中。如果页面显示空白或报错，请确认目标网站允许被嵌入，或考虑使用 HTML 模式自行构建页面内容。',
         hideCcsImportButton: '隐藏 CCS 导入按钮',
         hideCcsImportButtonHint: '启用后将在 API Keys 页面隐藏"导入 CCS"按钮'
-      },
-      soraClient: {
-        title: 'Sora 客户端',
-        description: '控制是否在侧边栏展示 Sora 客户端入口',
-        enabled: '启用 Sora 客户端',
-        enabledHint: '开启后，侧边栏将显示 Sora 入口，用户可访问 Sora 功能'
       },
       customMenu: {
         title: '自定义菜单页面',
@@ -2287,22 +2051,6 @@ export default {
         sending: '发送中...',
         enterRecipientHint: '请输入收件人邮箱地址'
       },
-      opsMonitoring: {
-        title: '运维监控',
-        description: '启用运维监控模块，用于排障与健康可视化',
-        disabled: '运维监控已关闭',
-        enabled: '启用运维监控',
-        enabledHint: '启用运维监控模块（仅管理员可见）',
-        realtimeEnabled: '启用实时监控',
-        realtimeEnabledHint: '启用实时请求速率和指标推送（WebSocket）',
-        queryMode: '默认查询模式',
-        queryModeHint: '运维监控默认查询模式（自动/原始/预聚合）',
-        queryModeAuto: '自动（推荐）',
-        queryModeRaw: '原始（最准确，但较慢）',
-        queryModePreagg: '预聚合（最快，需预聚合）',
-        metricsInterval: '采集频率（秒）',
-        metricsIntervalHint: '系统/请求指标采集频率（60-3600 秒）'
-      },
       adminApiKey: {
         title: '管理员 API Key',
         description: '用于外部系统集成的全局 API Key，拥有完整的管理员权限',
@@ -2325,167 +2073,6 @@ export default {
         securityWarning: '警告：此密钥拥有完整的管理员权限，请妥善保管。',
         usage: '使用方法：在请求头中添加 x-api-key: <your-admin-api-key>'
       },
-      soraS3: {
-        title: 'Sora 存储配置',
-        description: '以多配置列表管理 Sora 媒体存储，支持 S3 和 Google Drive',
-        newProfile: '新建配置',
-        reloadProfiles: '刷新列表',
-        empty: '暂无存储配置，请先创建',
-        createTitle: '新建存储配置',
-        editTitle: '编辑存储配置',
-        selectProvider: '选择存储类型',
-        providerS3Desc: 'S3 兼容对象存储',
-        providerGDriveDesc: 'Google Drive 云盘',
-        profileID: '配置 ID',
-        profileName: '配置名称',
-        setActive: '创建后设为生效',
-        saveProfile: '保存配置',
-        activateProfile: '设为生效',
-        profileCreated: '存储配置创建成功',
-        profileSaved: '存储配置保存成功',
-        profileDeleted: '存储配置删除成功',
-        profileActivated: '生效配置已切换',
-        profileIDRequired: '请填写配置 ID',
-        profileNameRequired: '请填写配置名称',
-        profileSelectRequired: '请先选择配置',
-        endpointRequired: '启用时必须填写 S3 端点',
-        bucketRequired: '启用时必须填写存储桶',
-        accessKeyRequired: '启用时必须填写 Access Key ID',
-        deleteConfirm: '确定删除存储配置 {profileID} 吗？',
-        columns: {
-          profile: '配置',
-          profileId: 'Profile ID',
-          name: '名称',
-          provider: '存储类型',
-          active: '生效状态',
-          endpoint: '端点',
-          bucket: '存储桶',
-          storagePath: '存储路径',
-          capacityUsage: '容量 / 已用',
-          capacityUnlimited: '无限制',
-          videoCount: '视频数',
-          videoCompleted: '完成',
-          videoInProgress: '进行中',
-          quota: '默认配额',
-          updatedAt: '更新时间',
-          actions: '操作',
-          rootFolder: '根目录',
-          testInTable: '测试',
-          testingInTable: '测试中...',
-          testTimeout: '测试超时（15秒）'
-        },
-        enabled: '启用存储',
-        enabledHint: '启用后，Sora 生成的媒体文件将自动上传到存储',
-        endpoint: 'S3 端点',
-        region: '区域',
-        bucket: '存储桶',
-        prefix: '对象前缀',
-        accessKeyId: 'Access Key ID',
-        secretAccessKey: 'Secret Access Key',
-        secretConfigured: '(已配置，留空保持不变)',
-        cdnUrl: 'CDN URL',
-        cdnUrlHint: '可选，配置后使用 CDN URL 访问文件',
-        forcePathStyle: '强制路径风格（Path Style）',
-        defaultQuota: '默认存储配额',
-        defaultQuotaHint: '未在用户或分组级别指定配额时的默认值，0 表示无限制',
-        testConnection: '测试连接',
-        testing: '测试中...',
-        testSuccess: '连接测试成功',
-        testFailed: '连接测试失败',
-        saved: '存储设置保存成功',
-        saveFailed: '保存存储设置失败',
-        gdrive: {
-          authType: '认证方式',
-          serviceAccount: '服务账号',
-          clientId: 'Client ID',
-          clientSecret: 'Client Secret',
-          clientSecretConfigured: '(已配置，留空保持不变)',
-          refreshToken: 'Refresh Token',
-          refreshTokenConfigured: '(已配置，留空保持不变)',
-          serviceAccountJson: '服务账号 JSON',
-          serviceAccountConfigured: '(已配置，留空保持不变)',
-          folderId: 'Folder ID（可选）',
-          authorize: '授权 Google Drive',
-          authorizeHint: '通过 OAuth2 获取 Refresh Token',
-          oauthFieldsRequired: '请先填写 Client ID 和 Client Secret',
-          oauthSuccess: 'Google Drive 授权成功',
-          oauthFailed: 'Google Drive 授权失败',
-          closeWindow: '此窗口将自动关闭',
-          processing: '正在处理授权...',
-          testStorage: '测试存储',
-          testSuccess: 'Google Drive 存储测试成功（上传、访问、删除均正常）',
-          testFailed: 'Google Drive 存储测试失败'
-        }
-      },
-      overloadCooldown: {
-        title: '529 过载冷却',
-        description: '配置上游返回 529（过载）时的账号调度暂停策略',
-        enabled: '启用过载冷却',
-        enabledHint: '收到 529 错误时暂停该账号的调度，冷却后自动恢复',
-        cooldownMinutes: '冷却时长（分钟）',
-        cooldownMinutesHint: '账号暂停调度的持续时间（1-120 分钟）',
-        saved: '过载冷却设置保存成功',
-        saveFailed: '保存过载冷却设置失败'
-      },
-      streamTimeout: {
-        title: '流超时处理',
-        description: '配置上游响应超时时的账户处理策略，避免问题账户持续被选中',
-        enabled: '启用流超时处理',
-        enabledHint: '当上游响应超时时，自动处理问题账户',
-        timeoutSeconds: '超时阈值（秒）',
-        timeoutSecondsHint: '流数据间隔超过此时间视为超时（30-300秒）',
-        action: '处理方式',
-        actionTempUnsched: '临时不可调度',
-        actionError: '标记为错误状态',
-        actionNone: '不处理',
-        actionHint: '超时后对账户执行的操作',
-        tempUnschedMinutes: '暂停时长（分钟）',
-        tempUnschedMinutesHint: '临时不可调度的持续时间（1-60分钟）',
-        thresholdCount: '触发阈值（次数）',
-        thresholdCountHint: '累计超时多少次后触发处理（1-10次）',
-        thresholdWindowMinutes: '阈值窗口（分钟）',
-        thresholdWindowMinutesHint: '超时计数的时间窗口（1-60分钟）',
-        saved: '流超时设置保存成功',
-        saveFailed: '保存流超时设置失败'
-      },
-      rectifier: {
-        title: '请求整流器',
-        description: '当上游返回特定错误时，自动修正请求参数并重试，提高请求成功率',
-        enabled: '启用请求整流器',
-        enabledHint: '总开关，关闭后所有整流功能均不生效',
-        thinkingSignature: 'Thinking 签名整流',
-        thinkingSignatureHint: '当上游返回 thinking block 签名校验错误时，自动去除签名并重试',
-        thinkingBudget: 'Thinking Budget 整流',
-        thinkingBudgetHint: '当上游返回 budget_tokens 约束错误（≥1024）时，自动将 budget 设为 32000 并重试',
-        apikeySignature: 'API Key 签名整流',
-        apikeySignatureHint:
-          '当 API Key 账号的上游返回签名相关错误时，自动去除签名并重试（内置规则始终生效）',
-        apikeyPatterns: '自定义匹配关键词',
-        apikeyPatternsHint:
-          '额外的关键词，匹配响应体中的内容（不区分大小写）。内置规则始终生效，此处用于补充额外匹配。',
-        apikeyPatternPlaceholder: '例如：thinking_error 或 签名无效',
-        addPattern: '添加关键词',
-        saved: '整流器设置保存成功',
-        saveFailed: '保存整流器设置失败'
-      },
-      betaPolicy: {
-        title: 'Beta 策略',
-        description: '配置转发 Anthropic API 请求时如何处理 Beta 特性。仅适用于 /v1/messages 接口。',
-        action: '处理方式',
-        actionPass: '透传（不处理）',
-        actionFilter: '过滤（移除）',
-        actionBlock: '拦截（拒绝请求）',
-        scope: '生效范围',
-        scopeAll: '全部账号',
-        scopeOAuth: '仅 OAuth 账号',
-        scopeAPIKey: '仅 API Key 账号',
-        scopeBedrock: '仅 Bedrock 账号',
-        errorMessage: '错误消息',
-        errorMessagePlaceholder: '拦截时返回的自定义错误消息',
-        errorMessageHint: '留空则使用默认错误消息',
-        saved: 'Beta 策略设置保存成功',
-        saveFailed: '保存 Beta 策略设置失败'
-      },
       saveSettings: '保存设置',
       saving: '保存中...',
       settingsSaved: '设置保存成功',
@@ -2498,138 +2085,6 @@ export default {
     },
 
     // Error Passthrough Rules
-    errorPassthrough: {
-      title: '错误透传规则',
-      description: '配置上游错误如何返回给客户端',
-      createRule: '创建规则',
-      editRule: '编辑规则',
-      deleteRule: '删除规则',
-      noRules: '暂无规则',
-      createFirstRule: '创建第一条错误透传规则',
-      allPlatforms: '所有平台',
-      passthrough: '透传',
-      custom: '自定义',
-      code: '状态码',
-      body: '消息体',
-      skipMonitoring: '跳过监控',
-
-      // Columns
-      columns: {
-        priority: '优先级',
-        name: '名称',
-        conditions: '匹配条件',
-        platforms: '平台',
-        behavior: '响应行为',
-        status: '状态',
-        actions: '操作'
-      },
-
-      // Match Mode
-      matchMode: {
-        any: '错误码 或 关键词',
-        all: '错误码 且 关键词',
-        anyHint: '状态码匹配任一错误码，或消息包含任一关键词',
-        allHint: '状态码匹配任一错误码，且消息包含任一关键词'
-      },
-
-      // Form
-      form: {
-        name: '规则名称',
-        namePlaceholder: '例如：上下文超限透传',
-        priority: '优先级',
-        priorityHint: '数值越小优先级越高，优先匹配',
-        description: '规则描述',
-        descriptionPlaceholder: '描述此规则的用途...',
-        matchConditions: '匹配条件',
-        errorCodes: '错误码',
-        errorCodesPlaceholder: '422, 400, 429',
-        errorCodesHint: '多个错误码用逗号分隔',
-        keywords: '关键词',
-        keywordsPlaceholder: '每行一个关键词\ncontext limit\nmodel not supported',
-        keywordsHint: '每行一个关键词，不区分大小写',
-        matchMode: '匹配模式',
-        platforms: '适用平台',
-        platformsHint: '不选择表示适用于所有平台',
-        responseBehavior: '响应行为',
-        passthroughCode: '透传上游状态码',
-        responseCode: '自定义状态码',
-        passthroughBody: '透传上游错误信息',
-        customMessage: '自定义错误信息',
-        customMessagePlaceholder: '返回给客户端的错误信息...',
-        skipMonitoring: '跳过运维监控记录',
-        skipMonitoringHint: '开启后，匹配此规则的错误不会被记录到运维监控中',
-        enabled: '启用此规则'
-      },
-
-      // Messages
-      nameRequired: '请输入规则名称',
-      conditionsRequired: '请至少配置一个错误码或关键词',
-      ruleCreated: '规则创建成功',
-      ruleUpdated: '规则更新成功',
-      ruleDeleted: '规则删除成功',
-      deleteConfirm: '确定要删除规则 "{name}" 吗？',
-      failedToLoad: '加载规则失败',
-      failedToSave: '保存规则失败',
-      failedToDelete: '删除规则失败',
-      failedToToggle: '切换状态失败'
-    },
-
-    // TLS 指纹模板
-    tlsFingerprintProfiles: {
-      title: 'TLS 指纹模板',
-      description: '管理 TLS 指纹模板，用于模拟特定客户端的 TLS 握手特征',
-      createProfile: '创建模板',
-      editProfile: '编辑模板',
-      deleteProfile: '删除模板',
-      noProfiles: '暂无模板',
-      createFirstProfile: '创建你的第一个 TLS 指纹模板',
-
-      columns: {
-        name: '名称',
-        description: '描述',
-        grease: 'GREASE',
-        alpn: 'ALPN',
-        actions: '操作'
-      },
-
-      form: {
-        pasteYaml: '粘贴 YAML 配置',
-        pasteYamlPlaceholder: '将 TLS 指纹采集器复制的 YAML 粘贴到这里...',
-        pasteYamlHint: '粘贴从 TLS 指纹采集器复制的 YAML 配置，自动填充所有字段。',
-        openCollector: '打开采集器',
-        parseYaml: '解析 YAML',
-        yamlParsed: 'YAML 解析成功，字段已自动填充',
-        yamlParseFailed: 'YAML 解析失败：未找到 name 字段',
-        name: '模板名称',
-        namePlaceholder: '例如 macOS Node.js v24',
-        description: '描述',
-        descriptionPlaceholder: '可选的模板描述',
-        enableGrease: '启用 GREASE',
-        enableGreaseHint: '在 TLS ClientHello 扩展中插入 GREASE 值',
-        cipherSuites: '密码套件',
-        cipherSuitesHint: '逗号分隔的十六进制值，例如 0x1301, 0x1302, 0xc02c',
-        curves: '椭圆曲线',
-        curvesHint: '逗号分隔的曲线 ID',
-        pointFormats: '点格式',
-        signatureAlgorithms: '签名算法',
-        alpnProtocols: 'ALPN 协议',
-        alpnProtocolsHint: '逗号分隔，例如 h2, http/1.1',
-        supportedVersions: '支持的 TLS 版本',
-        keyShareGroups: '密钥共享组',
-        pskModes: 'PSK 模式',
-        extensions: '扩展'
-      },
-
-      deleteConfirm: '删除模板',
-      deleteConfirmMessage: '确定要删除模板 "{name}" 吗？使用此模板的账号将回退到内置默认值。',
-      createSuccess: '模板创建成功',
-      updateSuccess: '模板更新成功',
-      deleteSuccess: '模板删除成功',
-      loadFailed: '加载模板失败',
-      saveFailed: '保存模板失败',
-      deleteFailed: '删除模板失败'
-    }
-  },
 
   // Subscription Progress (Header component)
   subscriptionProgress: {
@@ -2781,7 +2236,7 @@ export default {
       groupPlatform: {
         title: '🤖 2. 选择平台',
         description:
-          '<div style="line-height: 1.7;"><p style="margin-bottom: 12px;">选择该分组支持的 AI 平台。</p><div style="padding: 8px 12px; background: #eff6ff; border-left: 3px solid #3b82f6; border-radius: 4px; font-size: 13px; margin-bottom: 12px;"><b>📌 平台说明：</b><ul style="margin: 8px 0 0 16px;"><li><b>Anthropic</b> - Claude 系列模型</li><li><b>OpenAI</b> - GPT 系列模型</li><li><b>Google</b> - Gemini 系列模型</li></ul></div><p style="font-size: 13px; color: #6b7280;">一个分组只能选择一个平台</p></div>',
+          '<div style="line-height: 1.7;"><p style="margin-bottom: 12px;">选择该分组支持的平台。</p><p style="font-size: 13px; color: #6b7280;">一个分组只能选择一个平台</p></div>',
         nextBtn: '下一步'
       },
       groupMultiplier: {
@@ -2799,7 +2254,7 @@ export default {
       groupSubmit: {
         title: '✅ 保存分组',
         description:
-          '<div style="line-height: 1.7;"><p style="margin-bottom: 12px;">确认信息无误后，点击创建按钮保存分组。</p><p style="padding: 8px 12px; background: #fef3c7; border-left: 3px solid #f59e0b; border-radius: 4px; font-size: 13px; margin-bottom: 12px;"><b>⚠️ 注意：</b>分组创建后，平台类型不可修改，其他信息可以随时编辑</p><p style="padding: 8px 12px; background: #f0fdf4; border-left: 3px solid #10b981; border-radius: 4px; font-size: 13px;"><b>📌 下一步：</b>创建成功后，我们将添加上游账号到这个分组</p><p style="margin-top: 12px; color: #10b981; font-weight: 600;">👉 点击"创建"按钮</p></div>'
+          '<div style="line-height: 1.7;"><p style="margin-bottom: 12px;">确认信息无误后，点击创建按钮保存分组。</p><p style="padding: 8px 12px; background: #fef3c7; border-left: 3px solid #f59e0b; border-radius: 4px; font-size: 13px; margin-bottom: 12px;"><b>⚠️ 注意：</b>分组创建后，平台类型不可修改，其他信息可以随时编辑</p><p style="margin-top: 12px; color: #10b981; font-weight: 600;">👉 点击"创建"按钮</p></div>'
       },
       keyManage: {
         title: '🔑 第三步：生成密钥',

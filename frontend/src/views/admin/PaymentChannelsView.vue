@@ -75,7 +75,7 @@
         <div class="grid grid-cols-2 gap-4">
           <div>
             <label for="ch-platform" class="mb-1 block text-sm font-medium text-gray-700 dark:text-slate-300">{{ t('payment.admin.platform') }}</label>
-            <input id="ch-platform" v-model="form.platform" class="input w-full" placeholder="claude" maxlength="50" />
+            <input id="ch-platform" v-model="form.platform" class="input w-full" placeholder="default" maxlength="50" />
           </div>
           <div>
             <label for="ch-rate" class="mb-1 block text-sm font-medium text-gray-700 dark:text-slate-300">{{ t('payment.channel.rate') }}</label>
@@ -98,7 +98,7 @@
         </div>
         <div>
           <label for="ch-models" class="mb-1 block text-sm font-medium text-gray-700 dark:text-slate-300">{{ t('payment.admin.models') }}</label>
-          <input id="ch-models" v-model="form.models" class="input w-full" placeholder="claude-opus-4-6,claude-sonnet-4-6" maxlength="1000" />
+          <input id="ch-models" v-model="form.models" class="input w-full" placeholder="model-a,model-b" maxlength="1000" />
         </div>
         <div>
           <label for="ch-features" class="mb-1 block text-sm font-medium text-gray-700 dark:text-slate-300">{{ t('payment.channel.features') }}</label>
@@ -208,7 +208,7 @@ interface ChannelForm {
 
 const form = reactive<ChannelForm>({
   name: '',
-  platform: 'claude',
+  platform: 'default',
   rate_multiplier: '1.0',
   group_id: undefined,
   sort_order: 0,
@@ -368,7 +368,7 @@ async function handleSync() {
     for (const g of selected) {
       await adminPayAPI.createChannel({
         name: g.name,
-        platform: g.platform || 'claude',
+        platform: g.platform || 'default',
         rate_multiplier: '1.0',
         group_id: g.id,
         sort_order: 0,

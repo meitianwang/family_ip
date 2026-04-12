@@ -54,14 +54,6 @@ func CORS(cfg config.CORSConfig) gin.HandlerFunc {
 		"Content-Type", "Content-Length", "Accept-Encoding", "X-CSRF-Token", "Authorization",
 		"accept", "origin", "Cache-Control", "X-Requested-With", "X-API-Key",
 	}
-	// OpenAI Node SDK 会发送 x-stainless-* 请求头，需在 CORS 中显式放行。
-	openAIProperties := []string{
-		"lang", "package-version", "os", "arch", "retry-count", "runtime",
-		"runtime-version", "async", "helper-method", "poll-helper", "custom-poll-interval", "timeout",
-	}
-	for _, prop := range openAIProperties {
-		allowHeaders = append(allowHeaders, "x-stainless-"+prop)
-	}
 	allowHeadersValue := strings.Join(allowHeaders, ", ")
 
 	return func(c *gin.Context) {

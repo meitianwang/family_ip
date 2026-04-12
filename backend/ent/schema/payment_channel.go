@@ -43,7 +43,7 @@ func (PaymentChannel) Fields() []ent.Field {
 			NotEmpty(),
 		field.String("platform").
 			MaxLen(50).
-			Default("claude"),
+			Default("default"),
 		field.Other("rate_multiplier", decimal.Decimal{}).
 			SchemaType(map[string]string{dialect.Postgres: "decimal(10,4)"}),
 		field.String("description").
