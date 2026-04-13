@@ -498,7 +498,7 @@ fast-frame/
 │   │   ├── model/            # Data models
 │   │   ├── service/          # Business logic
 │   │   ├── handler/          # HTTP handlers
-│   │   └── gateway/          # Request routing core
+│   │   └── middleware/        # HTTP middleware
 │   └── resources/            # Static resources
 │
 ├── frontend/                 # Vue 3 frontend

@@ -419,12 +419,10 @@ default:
 - `server.trusted_proxies` 启用可信代理解析 X-Forwarded-For
 - `turnstile.required` 在 release 模式强制启用 Turnstile
 
-**网关防御纵深建议（重点）**
+**防御纵深建议（重点）**
 
-- `gateway.upstream_response_read_max_bytes`：限制非流式上游响应读取大小（默认 `8MB`），用于防止异常响应导致内存放大。
-- `gateway.proxy_probe_response_read_max_bytes`：限制代理探测响应读取大小（默认 `1MB`）。
 - `/auth/register`、`/auth/login`、`/auth/login/2fa`、`/auth/send-verify-code` 已提供服务端兜底限流（Redis 故障时 fail-close）。
-- 推荐将 WAF/CDN 作为第一层防护，服务端限流与响应读取上限作为第二层兜底；两层同时保留，避免旁路流量与误配置风险。
+- 推荐将 WAF/CDN 作为第一层防护，服务端限流作为第二层兜底；两层同时保留，避免旁路流量与误配置风险。
 
 **⚠️ 安全警告：HTTP URL 配置**
 
@@ -539,7 +537,7 @@ fast-frame/
 │   │   ├── model/            # 数据模型
 │   │   ├── service/          # 业务逻辑
 │   │   ├── handler/          # HTTP 处理器
-│   │   └── gateway/          # 请求路由核心
+│   │   └── middleware/        # HTTP 中间件
 │   └── resources/            # 静态资源
 │
 ├── frontend/                 # Vue 3 前端

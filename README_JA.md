@@ -498,7 +498,7 @@ fast-frame/
 │   │   ├── model/            # データモデル
 │   │   ├── service/          # ビジネスロジック
 │   │   ├── handler/          # HTTP ハンドラー
-│   │   └── gateway/          # リクエストルーティングコア
+│   │   └── middleware/        # HTTP ミドルウェア
 │   └── resources/            # 静的リソース
 │
 ├── frontend/                 # Vue 3 フロントエンド

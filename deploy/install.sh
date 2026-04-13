@@ -654,7 +654,7 @@ install_service() {
     # Create service file with configured host and port
     cat > /etc/systemd/system/fast-frame.service << EOF
 [Unit]
-Description=Fast-Frame - AI API Gateway Platform
+Description=Fast-Frame - Subscription Management Platform
 Documentation=https://github.com/meitianwang/fast-frame
 After=network.target postgresql.service redis.service
 Wants=postgresql.service redis.service

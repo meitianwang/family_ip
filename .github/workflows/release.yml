@@ -195,7 +195,7 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
           repository: ${{ secrets.DOCKERHUB_USERNAME }}/fast-frame
-          short-description: "Fast-Frame - AI API Gateway Platform"
+          short-description: "Fast-Frame - Subscription Management Platform"
           readme-filepath: ./deploy/DOCKER.md
 
       # Send Telegram notification
