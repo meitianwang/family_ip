@@ -93,9 +93,9 @@ export async function createRental(nodeId: number, productId: number, payType: s
   return data
 }
 
-export async function listRentals(page = 1, pageSize = 20): Promise<PaginatedResponse<ProxyRental>> {
+export async function listRentals(page = 1, pageSize = 20, status = ''): Promise<PaginatedResponse<ProxyRental>> {
   const { data } = await apiClient.get<PaginatedResponse<ProxyRental>>('/proxy/rentals', {
-    params: { page, page_size: pageSize }
+    params: { page, page_size: pageSize, ...(status ? { status } : {}) }
   })
   return data
 }

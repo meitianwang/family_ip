@@ -19,7 +19,16 @@
 
         <!-- Navigation -->
         <div class="mt-6 flex w-full flex-col gap-3">
+          <!-- Proxy rental success: show "View My Proxy" button -->
+          <button
+            v-if="isSuccess && pendingRentalId"
+            class="w-full rounded-lg py-3 text-center font-medium text-white bg-blue-600 hover:bg-blue-700"
+            @click="() => { sessionStorage.removeItem('pending_rental_id'); router.push(`/proxy/rentals/${pendingRentalId}`) }"
+          >
+            查看我的代理
+          </button>
           <router-link
+            v-else
             to="/purchase"
             class="w-full rounded-lg py-3 text-center font-medium text-white bg-blue-600 hover:bg-blue-700"
           >
@@ -39,13 +48,16 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import AppLayout from '@/components/layout/AppLayout.vue'
 import { payAPI } from '@/api/pay'
 
 const route = useRoute()
+const router = useRouter()
 const { t } = useI18n()
+
+const pendingRentalId = ref<string | null>(null)
 
 const loading = ref(true)
 const currentStatus = ref('pending')
@@ -156,6 +168,8 @@ function startPolling() {
 }
 
 onMounted(async () => {
+  pendingRentalId.value = sessionStorage.getItem('pending_rental_id')
+
   const orderId = route.query.out_trade_no as string
   if (!orderId) {
     loading.value = false

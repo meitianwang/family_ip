@@ -225,7 +225,11 @@ func (s *ProxyService) CancelRental(ctx context.Context, rentalID, userID int64)
 		return ErrProxyRentalNotCancellable
 	}
 	rental.Status = domain.ProxyRentalStatusCancelled
-	return s.rentalRepo.Update(ctx, rental)
+	if err := s.rentalRepo.Update(ctx, rental); err != nil {
+		return err
+	}
+	// Free the node so it can be sold again.
+	return s.nodeRepo.SetStatus(ctx, rental.NodeID, domain.ProxyNodeStatusAvailable)
 }
 
 // GetRentalWithCredential returns rental detail plus credential (only if active).
@@ -248,9 +252,10 @@ func (s *ProxyService) GetRentalWithCredential(ctx context.Context, rentalID, us
 	return rental, cred, nil
 }
 
-// ListUserRentals returns paginated rentals for a user.
-func (s *ProxyService) ListUserRentals(ctx context.Context, userID int64, params pagination.PaginationParams) ([]ProxyRental, *pagination.PaginationResult, error) {
-	return s.rentalRepo.ListByUserID(ctx, userID, params)
+// ListUserRentals returns paginated rentals for a user, optionally filtered by status.
+func (s *ProxyService) ListUserRentals(ctx context.Context, userID int64, filter ProxyRentalFilter, params pagination.PaginationParams) ([]ProxyRental, *pagination.PaginationResult, error) {
+	filter.UserID = &userID
+	return s.rentalRepo.List(ctx, filter, params)
 }
 
 // ListRentals returns paginated rentals for admin view.

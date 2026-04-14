@@ -127,7 +127,7 @@ const statusTabs = [
 async function reload() {
   loading.value = true
   try {
-    const result = await listRentals(currentPage.value, 20)
+    const result = await listRentals(currentPage.value, 20, filterStatus.value)
     rentals.value = result.items
     totalPages.value = result.pages
   } finally {

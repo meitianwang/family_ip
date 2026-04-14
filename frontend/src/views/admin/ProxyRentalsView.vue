@@ -1,5 +1,25 @@
 <template>
   <AppLayout>
+    <!-- VPS sync banner: shows rentals activated in last hour that need credential push -->
+    <div
+      v-if="pendingSyncCount > 0"
+      class="mx-4 mt-4 rounded-xl border border-amber-300 bg-amber-50 dark:border-amber-700 dark:bg-amber-900/20 px-4 py-3 flex items-center gap-3"
+    >
+      <span class="text-amber-600 dark:text-amber-400 text-lg">⚠️</span>
+      <div class="flex-1">
+        <p class="text-sm font-medium text-amber-800 dark:text-amber-300">
+          有 {{ pendingSyncCount }} 个租约在过去1小时内激活，需要将凭证同步到 VPS
+        </p>
+        <p class="text-xs text-amber-600 dark:text-amber-400 mt-0.5">
+          进入详情复制 HTTP 凭证，在对应 VPS 上更新代理用户配置
+        </p>
+      </div>
+      <button
+        @click="filterStatus = 'active'; reload()"
+        class="text-xs px-3 py-1.5 rounded-lg bg-amber-600 hover:bg-amber-700 text-white font-medium"
+      >查看激活订单</button>
+    </div>
+
     <TablePageLayout>
       <template #filters>
         <div class="flex flex-wrap items-center gap-3">
@@ -52,6 +72,7 @@
                 <td class="px-3 py-3 text-gray-600 dark:text-slate-400">{{ r.product?.name ?? `#${r.product_id}` }}</td>
                 <td class="px-3 py-3">
                   <span :class="statusClass(r.status)" class="text-xs px-2 py-0.5 rounded-full">{{ statusLabel(r.status) }}</span>
+                  <span v-if="isRecentlyActivated(r)" class="ml-1 text-xs px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300">需同步</span>
                 </td>
                 <td class="px-3 py-3 text-gray-600 dark:text-slate-400">{{ r.expires_at ? formatDate(r.expires_at) : '-' }}</td>
                 <td class="px-3 py-3 text-gray-600 dark:text-slate-400">
@@ -105,9 +126,9 @@
         <div v-if="selectedRental.credential" class="border-t border-gray-200 dark:border-slate-700 pt-4">
           <div class="text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wide mb-3">连接凭证</div>
           <div class="space-y-2 font-mono text-xs">
+            <div><span class="text-gray-400">HTTP 主机：</span>{{ selectedRental.credential.http_host }}:{{ selectedRental.credential.http_port }}</div>
             <div><span class="text-gray-400">HTTP 用户名：</span>{{ selectedRental.credential.http_username }}</div>
             <div><span class="text-gray-400">HTTP 密码：</span>{{ selectedRental.credential.http_password }}</div>
-            <div><span class="text-gray-400">VLESS UUID：</span>{{ selectedRental.credential.vless_uuid }}</div>
             <div class="break-all"><span class="text-gray-400">VLESS Link：</span>{{ selectedRental.credential.vless_link }}</div>
           </div>
         </div>
@@ -141,7 +162,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import AppLayout from '@/components/layout/AppLayout.vue'
 import TablePageLayout from '@/components/layout/TablePageLayout.vue'
 import BaseDialog from '@/components/common/BaseDialog.vue'
@@ -154,6 +175,13 @@ const filterStatus = ref('')
 const filterUserId = ref<number | ''>('')
 const currentPage = ref(1)
 const totalPages = ref(1)
+
+function isRecentlyActivated(r: AdminProxyRental): boolean {
+  if (r.status !== 'active' || !r.started_at) return false
+  return Date.now() - new Date(r.started_at).getTime() < 60 * 60 * 1000
+}
+
+const pendingSyncCount = computed(() => rentals.value.filter(isRecentlyActivated).length)
 
 const detailOpen = ref(false)
 const trafficOpen = ref(false)

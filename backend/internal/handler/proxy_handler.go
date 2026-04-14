@@ -154,7 +154,8 @@ func (h *ProxyHandler) ListRentals(c *gin.Context) {
 		return
 	}
 	page, pageSize := response.ParsePagination(c)
-	rentals, result, err := h.proxyService.ListUserRentals(c.Request.Context(), subject.UserID,
+	filter := service.ProxyRentalFilter{Status: c.Query("status"), UserID: &subject.UserID}
+	rentals, result, err := h.proxyService.ListUserRentals(c.Request.Context(), subject.UserID, filter,
 		pagination.PaginationParams{Page: page, PageSize: pageSize})
 	if err != nil {
 		response.ErrorFrom(c, err)

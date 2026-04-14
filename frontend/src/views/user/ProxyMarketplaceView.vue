@@ -188,11 +188,13 @@ async function purchase() {
   submitting.value = true
   try {
     const result = await createRental(selectedNode.value.id, selectedProduct.value.id, payType.value)
-    // Navigate to payment result page
     if (result.pay_url) {
+      // External payment page (Alipay/WeChat) — after return, user lands on detail
+      sessionStorage.setItem('pending_rental_id', String(result.rental_id))
       window.location.href = result.pay_url
     } else {
-      router.push({ name: 'PaymentResult', query: { order_id: result.order_id } })
+      // Balance payment / Stripe popup — jump straight to rental detail
+      router.push({ name: 'ProxyRentalDetail', params: { id: result.rental_id } })
     }
   } catch (e: unknown) {
     const msg = e instanceof Error ? e.message : '购买失败，请重试'
