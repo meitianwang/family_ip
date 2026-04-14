@@ -36,6 +36,21 @@ type PromoCode func(*sql.Selector)
 // PromoCodeUsage is the predicate function for promocodeusage builders.
 type PromoCodeUsage func(*sql.Selector)
 
+// ProxyCredential is the predicate function for proxycredential builders.
+type ProxyCredential func(*sql.Selector)
+
+// ProxyNode is the predicate function for proxynode builders.
+type ProxyNode func(*sql.Selector)
+
+// ProxyProduct is the predicate function for proxyproduct builders.
+type ProxyProduct func(*sql.Selector)
+
+// ProxyRental is the predicate function for proxyrental builders.
+type ProxyRental func(*sql.Selector)
+
+// ProxyTrafficLog is the predicate function for proxytrafficlog builders.
+type ProxyTrafficLog func(*sql.Selector)
+
 // RedeemCode is the predicate function for redeemcode builders.
 type RedeemCode func(*sql.Selector)
 

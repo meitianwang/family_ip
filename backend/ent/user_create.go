@@ -15,6 +15,8 @@ import (
 	"github.com/meitianwang/fast-frame/ent/group"
 	"github.com/meitianwang/fast-frame/ent/paymentorder"
 	"github.com/meitianwang/fast-frame/ent/promocodeusage"
+	"github.com/meitianwang/fast-frame/ent/proxyrental"
+	"github.com/meitianwang/fast-frame/ent/proxytrafficlog"
 	"github.com/meitianwang/fast-frame/ent/redeemcode"
 	"github.com/meitianwang/fast-frame/ent/user"
 	"github.com/meitianwang/fast-frame/ent/userattributevalue"
@@ -327,6 +329,36 @@ func (_c *UserCreate) AddPaymentOrders(v ...*PaymentOrder) *UserCreate {
 		ids[i] = v[i].ID
 	}
 	return _c.AddPaymentOrderIDs(ids...)
+}
+
+// AddProxyRentalIDs adds the "proxy_rentals" edge to the ProxyRental entity by IDs.
+func (_c *UserCreate) AddProxyRentalIDs(ids ...int64) *UserCreate {
+	_c.mutation.AddProxyRentalIDs(ids...)
+	return _c
+}
+
+// AddProxyRentals adds the "proxy_rentals" edges to the ProxyRental entity.
+func (_c *UserCreate) AddProxyRentals(v ...*ProxyRental) *UserCreate {
+	ids := make([]int64, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _c.AddProxyRentalIDs(ids...)
+}
+
+// AddProxyTrafficLogIDs adds the "proxy_traffic_logs" edge to the ProxyTrafficLog entity by IDs.
+func (_c *UserCreate) AddProxyTrafficLogIDs(ids ...int64) *UserCreate {
+	_c.mutation.AddProxyTrafficLogIDs(ids...)
+	return _c
+}
+
+// AddProxyTrafficLogs adds the "proxy_traffic_logs" edges to the ProxyTrafficLog entity.
+func (_c *UserCreate) AddProxyTrafficLogs(v ...*ProxyTrafficLog) *UserCreate {
+	ids := make([]int64, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _c.AddProxyTrafficLogIDs(ids...)
 }
 
 // Mutation returns the UserMutation object of the builder.
@@ -679,6 +711,38 @@ func (_c *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(paymentorder.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := _c.mutation.ProxyRentalsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.ProxyRentalsTable,
+			Columns: []string{user.ProxyRentalsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(proxyrental.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := _c.mutation.ProxyTrafficLogsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.ProxyTrafficLogsTable,
+			Columns: []string{user.ProxyTrafficLogsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(proxytrafficlog.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

@@ -34,6 +34,16 @@ type Tx struct {
 	PromoCode *PromoCodeClient
 	// PromoCodeUsage is the client for interacting with the PromoCodeUsage builders.
 	PromoCodeUsage *PromoCodeUsageClient
+	// ProxyCredential is the client for interacting with the ProxyCredential builders.
+	ProxyCredential *ProxyCredentialClient
+	// ProxyNode is the client for interacting with the ProxyNode builders.
+	ProxyNode *ProxyNodeClient
+	// ProxyProduct is the client for interacting with the ProxyProduct builders.
+	ProxyProduct *ProxyProductClient
+	// ProxyRental is the client for interacting with the ProxyRental builders.
+	ProxyRental *ProxyRentalClient
+	// ProxyTrafficLog is the client for interacting with the ProxyTrafficLog builders.
+	ProxyTrafficLog *ProxyTrafficLogClient
 	// RedeemCode is the client for interacting with the RedeemCode builders.
 	RedeemCode *RedeemCodeClient
 	// SecuritySecret is the client for interacting with the SecuritySecret builders.
@@ -193,6 +203,11 @@ func (tx *Tx) init() {
 	tx.PaymentProviderInstance = NewPaymentProviderInstanceClient(tx.config)
 	tx.PromoCode = NewPromoCodeClient(tx.config)
 	tx.PromoCodeUsage = NewPromoCodeUsageClient(tx.config)
+	tx.ProxyCredential = NewProxyCredentialClient(tx.config)
+	tx.ProxyNode = NewProxyNodeClient(tx.config)
+	tx.ProxyProduct = NewProxyProductClient(tx.config)
+	tx.ProxyRental = NewProxyRentalClient(tx.config)
+	tx.ProxyTrafficLog = NewProxyTrafficLogClient(tx.config)
 	tx.RedeemCode = NewRedeemCodeClient(tx.config)
 	tx.SecuritySecret = NewSecuritySecretClient(tx.config)
 	tx.Setting = NewSettingClient(tx.config)

@@ -9,6 +9,7 @@ import (
 
 // ProvideAdminHandlers creates the AdminHandlers struct
 func ProvideAdminHandlers(
+	proxyAdminHandler *admin.ProxyAdminHandler,
 	dashboardHandler *admin.DashboardHandler,
 	userHandler *admin.UserHandler,
 	announcementHandler *admin.AnnouncementHandler,
@@ -28,6 +29,7 @@ func ProvideAdminHandlers(
 	paymentDashboardHandler *admin.PaymentDashboardHandler,
 ) *AdminHandlers {
 	return &AdminHandlers{
+		Proxy:                 proxyAdminHandler,
 		Dashboard:             dashboardHandler,
 		User:                  userHandler,
 		Announcement:          announcementHandler,
@@ -70,6 +72,7 @@ func ProvideHandlers(
 	totpHandler *TotpHandler,
 	paymentHandler *PaymentHandler,
 	paymentWebhookHandler *PaymentWebhookHandler,
+	proxyHandler *ProxyHandler,
 ) *Handlers {
 	return &Handlers{
 		Auth:           authHandler,
@@ -82,6 +85,7 @@ func ProvideHandlers(
 		Totp:           totpHandler,
 		Payment:        paymentHandler,
 		PaymentWebhook: paymentWebhookHandler,
+		Proxy:          proxyHandler,
 	}
 }
 
@@ -107,6 +111,10 @@ var ProviderSet = wire.NewSet(
 	ProvideSystemHandler,
 	admin.NewSubscriptionHandler,
 	admin.NewUserAttributeHandler,
+
+	// Proxy handlers
+	NewProxyHandler,
+	admin.NewProxyAdminHandler,
 
 	// Payment handlers
 	NewPaymentHandler,

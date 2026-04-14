@@ -80,6 +80,33 @@ const (
 	PaymentTypeStripe       = "stripe"
 )
 
+// Proxy node status constants
+const (
+	ProxyNodeStatusAvailable = "available"
+	ProxyNodeStatusRented    = "rented"
+	ProxyNodeStatusOffline   = "offline"
+)
+
+// Proxy rental status constants
+const (
+	ProxyRentalStatusPendingPayment = "pending_payment"
+	ProxyRentalStatusActive         = "active"
+	ProxyRentalStatusExpired        = "expired"
+	ProxyRentalStatusCancelled      = "cancelled"
+)
+
+// VLESS network type constants
+const (
+	VlessNetworkTCP  = "tcp"
+	VlessNetworkWS   = "ws"
+	VlessNetworkGRPC = "grpc"
+)
+
+// Payment order type for proxy rental
+const (
+	PaymentOrderTypeProxyRental = "proxy_rental"
+)
+
 // Payment provider key constants
 const (
 	PaymentProviderEasyPay = "easypay"

@@ -67,6 +67,7 @@ func provideCleanup(
 	subscriptionService *service.SubscriptionService,
 	backupSvc *service.BackupService,
 	paymentOrderExpiry *service.PaymentOrderExpiryService,
+	proxyExpiry *service.ProxyExpiryService,
 ) func() {
 	return func() {
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
@@ -92,6 +93,10 @@ func provideCleanup(
 		if paymentOrderExpiry != nil {
 			paymentOrderExpiry.Stop()
 			log.Println("[Cleanup] PaymentOrderExpiryService stopped")
+		}
+		if proxyExpiry != nil {
+			proxyExpiry.Stop()
+			log.Println("[Cleanup] ProxyExpiryService stopped")
 		}
 
 		// Close infrastructure

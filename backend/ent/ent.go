@@ -22,6 +22,11 @@ import (
 	"github.com/meitianwang/fast-frame/ent/paymentproviderinstance"
 	"github.com/meitianwang/fast-frame/ent/promocode"
 	"github.com/meitianwang/fast-frame/ent/promocodeusage"
+	"github.com/meitianwang/fast-frame/ent/proxycredential"
+	"github.com/meitianwang/fast-frame/ent/proxynode"
+	"github.com/meitianwang/fast-frame/ent/proxyproduct"
+	"github.com/meitianwang/fast-frame/ent/proxyrental"
+	"github.com/meitianwang/fast-frame/ent/proxytrafficlog"
 	"github.com/meitianwang/fast-frame/ent/redeemcode"
 	"github.com/meitianwang/fast-frame/ent/securitysecret"
 	"github.com/meitianwang/fast-frame/ent/setting"
@@ -101,6 +106,11 @@ func checkColumn(t, c string) error {
 			paymentproviderinstance.Table: paymentproviderinstance.ValidColumn,
 			promocode.Table:               promocode.ValidColumn,
 			promocodeusage.Table:          promocodeusage.ValidColumn,
+			proxycredential.Table:         proxycredential.ValidColumn,
+			proxynode.Table:               proxynode.ValidColumn,
+			proxyproduct.Table:            proxyproduct.ValidColumn,
+			proxyrental.Table:             proxyrental.ValidColumn,
+			proxytrafficlog.Table:         proxytrafficlog.ValidColumn,
 			redeemcode.Table:              redeemcode.ValidColumn,
 			securitysecret.Table:          securitysecret.ValidColumn,
 			setting.Table:                 setting.ValidColumn,

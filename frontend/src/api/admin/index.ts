@@ -16,6 +16,7 @@ import dataManagementAPI from './dataManagement'
 import apiKeysAPI from './apiKeys'
 import backupAPI from './backup'
 import payAPI from './pay'
+import proxyAdminAPI from './proxy'
 
 /**
  * Unified admin API object for convenient access
@@ -34,6 +35,7 @@ export const adminAPI = {
   apiKeys: apiKeysAPI,
   backup: backupAPI,
   pay: payAPI,
+  proxy: proxyAdminAPI,
 }
 
 export {
@@ -50,6 +52,7 @@ export {
   apiKeysAPI,
   backupAPI,
   payAPI,
+  proxyAdminAPI,
 }
 
 export default adminAPI

@@ -1044,6 +1044,52 @@ func HasPaymentOrdersWith(preds ...predicate.PaymentOrder) predicate.User {
 	})
 }
 
+// HasProxyRentals applies the HasEdge predicate on the "proxy_rentals" edge.
+func HasProxyRentals() predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, ProxyRentalsTable, ProxyRentalsColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasProxyRentalsWith applies the HasEdge predicate on the "proxy_rentals" edge with a given conditions (other predicates).
+func HasProxyRentalsWith(preds ...predicate.ProxyRental) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := newProxyRentalsStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasProxyTrafficLogs applies the HasEdge predicate on the "proxy_traffic_logs" edge.
+func HasProxyTrafficLogs() predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, ProxyTrafficLogsTable, ProxyTrafficLogsColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasProxyTrafficLogsWith applies the HasEdge predicate on the "proxy_traffic_logs" edge with a given conditions (other predicates).
+func HasProxyTrafficLogsWith(preds ...predicate.ProxyTrafficLog) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := newProxyTrafficLogsStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // HasUserAllowedGroups applies the HasEdge predicate on the "user_allowed_groups" edge.
 func HasUserAllowedGroups() predicate.User {
 	return predicate.User(func(s *sql.Selector) {

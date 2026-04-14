@@ -63,5 +63,17 @@ func RegisterUserRoutes(
 
 		// 支付
 		registerPaymentUserRoutes(authenticated, h)
+
+		// 代理 IP
+		proxy := authenticated.Group("/proxy")
+		{
+			proxy.GET("/nodes", h.Proxy.ListNodes)
+			proxy.GET("/nodes/:id", h.Proxy.GetNode)
+			proxy.GET("/products", h.Proxy.ListProducts)
+			proxy.POST("/rentals", h.Proxy.CreateRental)
+			proxy.GET("/rentals", h.Proxy.ListRentals)
+			proxy.GET("/rentals/:id", h.Proxy.GetRental)
+			proxy.POST("/rentals/:id/cancel", h.Proxy.CancelRental)
+		}
 	}
 }

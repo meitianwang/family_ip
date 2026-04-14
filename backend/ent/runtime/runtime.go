@@ -15,6 +15,11 @@ import (
 	"github.com/meitianwang/fast-frame/ent/paymentproviderinstance"
 	"github.com/meitianwang/fast-frame/ent/promocode"
 	"github.com/meitianwang/fast-frame/ent/promocodeusage"
+	"github.com/meitianwang/fast-frame/ent/proxycredential"
+	"github.com/meitianwang/fast-frame/ent/proxynode"
+	"github.com/meitianwang/fast-frame/ent/proxyproduct"
+	"github.com/meitianwang/fast-frame/ent/proxyrental"
+	"github.com/meitianwang/fast-frame/ent/proxytrafficlog"
 	"github.com/meitianwang/fast-frame/ent/redeemcode"
 	"github.com/meitianwang/fast-frame/ent/schema"
 	"github.com/meitianwang/fast-frame/ent/securitysecret"
@@ -485,6 +490,289 @@ func init() {
 	promocodeusageDescUsedAt := promocodeusageFields[3].Descriptor()
 	// promocodeusage.DefaultUsedAt holds the default value on creation for the used_at field.
 	promocodeusage.DefaultUsedAt = promocodeusageDescUsedAt.Default.(func() time.Time)
+	proxycredentialMixin := schema.ProxyCredential{}.Mixin()
+	proxycredentialMixinFields0 := proxycredentialMixin[0].Fields()
+	_ = proxycredentialMixinFields0
+	proxycredentialFields := schema.ProxyCredential{}.Fields()
+	_ = proxycredentialFields
+	// proxycredentialDescCreatedAt is the schema descriptor for created_at field.
+	proxycredentialDescCreatedAt := proxycredentialMixinFields0[0].Descriptor()
+	// proxycredential.DefaultCreatedAt holds the default value on creation for the created_at field.
+	proxycredential.DefaultCreatedAt = proxycredentialDescCreatedAt.Default.(func() time.Time)
+	// proxycredentialDescUpdatedAt is the schema descriptor for updated_at field.
+	proxycredentialDescUpdatedAt := proxycredentialMixinFields0[1].Descriptor()
+	// proxycredential.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	proxycredential.DefaultUpdatedAt = proxycredentialDescUpdatedAt.Default.(func() time.Time)
+	// proxycredential.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	proxycredential.UpdateDefaultUpdatedAt = proxycredentialDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// proxycredentialDescHTTPUsername is the schema descriptor for http_username field.
+	proxycredentialDescHTTPUsername := proxycredentialFields[1].Descriptor()
+	// proxycredential.HTTPUsernameValidator is a validator for the "http_username" field. It is called by the builders before save.
+	proxycredential.HTTPUsernameValidator = func() func(string) error {
+		validators := proxycredentialDescHTTPUsername.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+		}
+		return func(http_username string) error {
+			for _, fn := range fns {
+				if err := fn(http_username); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
+	// proxycredentialDescHTTPPassword is the schema descriptor for http_password field.
+	proxycredentialDescHTTPPassword := proxycredentialFields[2].Descriptor()
+	// proxycredential.HTTPPasswordValidator is a validator for the "http_password" field. It is called by the builders before save.
+	proxycredential.HTTPPasswordValidator = func() func(string) error {
+		validators := proxycredentialDescHTTPPassword.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+		}
+		return func(http_password string) error {
+			for _, fn := range fns {
+				if err := fn(http_password); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
+	// proxycredentialDescVlessUUID is the schema descriptor for vless_uuid field.
+	proxycredentialDescVlessUUID := proxycredentialFields[3].Descriptor()
+	// proxycredential.VlessUUIDValidator is a validator for the "vless_uuid" field. It is called by the builders before save.
+	proxycredential.VlessUUIDValidator = func() func(string) error {
+		validators := proxycredentialDescVlessUUID.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+		}
+		return func(vless_uuid string) error {
+			for _, fn := range fns {
+				if err := fn(vless_uuid); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
+	// proxycredentialDescVlessLink is the schema descriptor for vless_link field.
+	proxycredentialDescVlessLink := proxycredentialFields[4].Descriptor()
+	// proxycredential.VlessLinkValidator is a validator for the "vless_link" field. It is called by the builders before save.
+	proxycredential.VlessLinkValidator = proxycredentialDescVlessLink.Validators[0].(func(string) error)
+	proxynodeMixin := schema.ProxyNode{}.Mixin()
+	proxynodeMixinHooks1 := proxynodeMixin[1].Hooks()
+	proxynode.Hooks[0] = proxynodeMixinHooks1[0]
+	proxynodeMixinInters1 := proxynodeMixin[1].Interceptors()
+	proxynode.Interceptors[0] = proxynodeMixinInters1[0]
+	proxynodeMixinFields0 := proxynodeMixin[0].Fields()
+	_ = proxynodeMixinFields0
+	proxynodeFields := schema.ProxyNode{}.Fields()
+	_ = proxynodeFields
+	// proxynodeDescCreatedAt is the schema descriptor for created_at field.
+	proxynodeDescCreatedAt := proxynodeMixinFields0[0].Descriptor()
+	// proxynode.DefaultCreatedAt holds the default value on creation for the created_at field.
+	proxynode.DefaultCreatedAt = proxynodeDescCreatedAt.Default.(func() time.Time)
+	// proxynodeDescUpdatedAt is the schema descriptor for updated_at field.
+	proxynodeDescUpdatedAt := proxynodeMixinFields0[1].Descriptor()
+	// proxynode.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	proxynode.DefaultUpdatedAt = proxynodeDescUpdatedAt.Default.(func() time.Time)
+	// proxynode.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	proxynode.UpdateDefaultUpdatedAt = proxynodeDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// proxynodeDescIPAddress is the schema descriptor for ip_address field.
+	proxynodeDescIPAddress := proxynodeFields[0].Descriptor()
+	// proxynode.IPAddressValidator is a validator for the "ip_address" field. It is called by the builders before save.
+	proxynode.IPAddressValidator = func() func(string) error {
+		validators := proxynodeDescIPAddress.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+		}
+		return func(ip_address string) error {
+			for _, fn := range fns {
+				if err := fn(ip_address); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
+	// proxynodeDescCountry is the schema descriptor for country field.
+	proxynodeDescCountry := proxynodeFields[1].Descriptor()
+	// proxynode.DefaultCountry holds the default value on creation for the country field.
+	proxynode.DefaultCountry = proxynodeDescCountry.Default.(string)
+	// proxynode.CountryValidator is a validator for the "country" field. It is called by the builders before save.
+	proxynode.CountryValidator = proxynodeDescCountry.Validators[0].(func(string) error)
+	// proxynodeDescCountryCode is the schema descriptor for country_code field.
+	proxynodeDescCountryCode := proxynodeFields[2].Descriptor()
+	// proxynode.DefaultCountryCode holds the default value on creation for the country_code field.
+	proxynode.DefaultCountryCode = proxynodeDescCountryCode.Default.(string)
+	// proxynode.CountryCodeValidator is a validator for the "country_code" field. It is called by the builders before save.
+	proxynode.CountryCodeValidator = proxynodeDescCountryCode.Validators[0].(func(string) error)
+	// proxynodeDescCity is the schema descriptor for city field.
+	proxynodeDescCity := proxynodeFields[3].Descriptor()
+	// proxynode.DefaultCity holds the default value on creation for the city field.
+	proxynode.DefaultCity = proxynodeDescCity.Default.(string)
+	// proxynode.CityValidator is a validator for the "city" field. It is called by the builders before save.
+	proxynode.CityValidator = proxynodeDescCity.Validators[0].(func(string) error)
+	// proxynodeDescIsp is the schema descriptor for isp field.
+	proxynodeDescIsp := proxynodeFields[4].Descriptor()
+	// proxynode.DefaultIsp holds the default value on creation for the isp field.
+	proxynode.DefaultIsp = proxynodeDescIsp.Default.(string)
+	// proxynode.IspValidator is a validator for the "isp" field. It is called by the builders before save.
+	proxynode.IspValidator = proxynodeDescIsp.Validators[0].(func(string) error)
+	// proxynodeDescHTTPPort is the schema descriptor for http_port field.
+	proxynodeDescHTTPPort := proxynodeFields[5].Descriptor()
+	// proxynode.DefaultHTTPPort holds the default value on creation for the http_port field.
+	proxynode.DefaultHTTPPort = proxynodeDescHTTPPort.Default.(int)
+	// proxynodeDescVlessPort is the schema descriptor for vless_port field.
+	proxynodeDescVlessPort := proxynodeFields[6].Descriptor()
+	// proxynode.DefaultVlessPort holds the default value on creation for the vless_port field.
+	proxynode.DefaultVlessPort = proxynodeDescVlessPort.Default.(int)
+	// proxynodeDescVlessNetwork is the schema descriptor for vless_network field.
+	proxynodeDescVlessNetwork := proxynodeFields[7].Descriptor()
+	// proxynode.DefaultVlessNetwork holds the default value on creation for the vless_network field.
+	proxynode.DefaultVlessNetwork = proxynodeDescVlessNetwork.Default.(string)
+	// proxynode.VlessNetworkValidator is a validator for the "vless_network" field. It is called by the builders before save.
+	proxynode.VlessNetworkValidator = proxynodeDescVlessNetwork.Validators[0].(func(string) error)
+	// proxynodeDescVlessTLS is the schema descriptor for vless_tls field.
+	proxynodeDescVlessTLS := proxynodeFields[8].Descriptor()
+	// proxynode.DefaultVlessTLS holds the default value on creation for the vless_tls field.
+	proxynode.DefaultVlessTLS = proxynodeDescVlessTLS.Default.(bool)
+	// proxynodeDescVlessSni is the schema descriptor for vless_sni field.
+	proxynodeDescVlessSni := proxynodeFields[9].Descriptor()
+	// proxynode.DefaultVlessSni holds the default value on creation for the vless_sni field.
+	proxynode.DefaultVlessSni = proxynodeDescVlessSni.Default.(string)
+	// proxynode.VlessSniValidator is a validator for the "vless_sni" field. It is called by the builders before save.
+	proxynode.VlessSniValidator = proxynodeDescVlessSni.Validators[0].(func(string) error)
+	// proxynodeDescVlessWsPath is the schema descriptor for vless_ws_path field.
+	proxynodeDescVlessWsPath := proxynodeFields[10].Descriptor()
+	// proxynode.DefaultVlessWsPath holds the default value on creation for the vless_ws_path field.
+	proxynode.DefaultVlessWsPath = proxynodeDescVlessWsPath.Default.(string)
+	// proxynode.VlessWsPathValidator is a validator for the "vless_ws_path" field. It is called by the builders before save.
+	proxynode.VlessWsPathValidator = proxynodeDescVlessWsPath.Validators[0].(func(string) error)
+	// proxynodeDescTags is the schema descriptor for tags field.
+	proxynodeDescTags := proxynodeFields[11].Descriptor()
+	// proxynode.DefaultTags holds the default value on creation for the tags field.
+	proxynode.DefaultTags = proxynodeDescTags.Default.([]string)
+	// proxynodeDescStatus is the schema descriptor for status field.
+	proxynodeDescStatus := proxynodeFields[12].Descriptor()
+	// proxynode.DefaultStatus holds the default value on creation for the status field.
+	proxynode.DefaultStatus = proxynodeDescStatus.Default.(string)
+	// proxynode.StatusValidator is a validator for the "status" field. It is called by the builders before save.
+	proxynode.StatusValidator = proxynodeDescStatus.Validators[0].(func(string) error)
+	// proxynodeDescDescription is the schema descriptor for description field.
+	proxynodeDescDescription := proxynodeFields[13].Descriptor()
+	// proxynode.DefaultDescription holds the default value on creation for the description field.
+	proxynode.DefaultDescription = proxynodeDescDescription.Default.(string)
+	proxyproductMixin := schema.ProxyProduct{}.Mixin()
+	proxyproductMixinFields0 := proxyproductMixin[0].Fields()
+	_ = proxyproductMixinFields0
+	proxyproductFields := schema.ProxyProduct{}.Fields()
+	_ = proxyproductFields
+	// proxyproductDescCreatedAt is the schema descriptor for created_at field.
+	proxyproductDescCreatedAt := proxyproductMixinFields0[0].Descriptor()
+	// proxyproduct.DefaultCreatedAt holds the default value on creation for the created_at field.
+	proxyproduct.DefaultCreatedAt = proxyproductDescCreatedAt.Default.(func() time.Time)
+	// proxyproductDescUpdatedAt is the schema descriptor for updated_at field.
+	proxyproductDescUpdatedAt := proxyproductMixinFields0[1].Descriptor()
+	// proxyproduct.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	proxyproduct.DefaultUpdatedAt = proxyproductDescUpdatedAt.Default.(func() time.Time)
+	// proxyproduct.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	proxyproduct.UpdateDefaultUpdatedAt = proxyproductDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// proxyproductDescName is the schema descriptor for name field.
+	proxyproductDescName := proxyproductFields[0].Descriptor()
+	// proxyproduct.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	proxyproduct.NameValidator = func() func(string) error {
+		validators := proxyproductDescName.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+		}
+		return func(name string) error {
+			for _, fn := range fns {
+				if err := fn(name); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
+	// proxyproductDescDescription is the schema descriptor for description field.
+	proxyproductDescDescription := proxyproductFields[1].Descriptor()
+	// proxyproduct.DefaultDescription holds the default value on creation for the description field.
+	proxyproduct.DefaultDescription = proxyproductDescDescription.Default.(string)
+	// proxyproductDescDurationDays is the schema descriptor for duration_days field.
+	proxyproductDescDurationDays := proxyproductFields[2].Descriptor()
+	// proxyproduct.DurationDaysValidator is a validator for the "duration_days" field. It is called by the builders before save.
+	proxyproduct.DurationDaysValidator = proxyproductDescDurationDays.Validators[0].(func(int) error)
+	// proxyproductDescTrafficLimitGB is the schema descriptor for traffic_limit_gb field.
+	proxyproductDescTrafficLimitGB := proxyproductFields[3].Descriptor()
+	// proxyproduct.DefaultTrafficLimitGB holds the default value on creation for the traffic_limit_gb field.
+	proxyproduct.DefaultTrafficLimitGB = proxyproductDescTrafficLimitGB.Default.(int)
+	// proxyproductDescSortOrder is the schema descriptor for sort_order field.
+	proxyproductDescSortOrder := proxyproductFields[5].Descriptor()
+	// proxyproduct.DefaultSortOrder holds the default value on creation for the sort_order field.
+	proxyproduct.DefaultSortOrder = proxyproductDescSortOrder.Default.(int)
+	// proxyproductDescIsActive is the schema descriptor for is_active field.
+	proxyproductDescIsActive := proxyproductFields[6].Descriptor()
+	// proxyproduct.DefaultIsActive holds the default value on creation for the is_active field.
+	proxyproduct.DefaultIsActive = proxyproductDescIsActive.Default.(bool)
+	proxyrentalMixin := schema.ProxyRental{}.Mixin()
+	proxyrentalMixinFields0 := proxyrentalMixin[0].Fields()
+	_ = proxyrentalMixinFields0
+	proxyrentalFields := schema.ProxyRental{}.Fields()
+	_ = proxyrentalFields
+	// proxyrentalDescCreatedAt is the schema descriptor for created_at field.
+	proxyrentalDescCreatedAt := proxyrentalMixinFields0[0].Descriptor()
+	// proxyrental.DefaultCreatedAt holds the default value on creation for the created_at field.
+	proxyrental.DefaultCreatedAt = proxyrentalDescCreatedAt.Default.(func() time.Time)
+	// proxyrentalDescUpdatedAt is the schema descriptor for updated_at field.
+	proxyrentalDescUpdatedAt := proxyrentalMixinFields0[1].Descriptor()
+	// proxyrental.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	proxyrental.DefaultUpdatedAt = proxyrentalDescUpdatedAt.Default.(func() time.Time)
+	// proxyrental.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	proxyrental.UpdateDefaultUpdatedAt = proxyrentalDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// proxyrentalDescStatus is the schema descriptor for status field.
+	proxyrentalDescStatus := proxyrentalFields[4].Descriptor()
+	// proxyrental.DefaultStatus holds the default value on creation for the status field.
+	proxyrental.DefaultStatus = proxyrentalDescStatus.Default.(string)
+	// proxyrental.StatusValidator is a validator for the "status" field. It is called by the builders before save.
+	proxyrental.StatusValidator = proxyrentalDescStatus.Validators[0].(func(string) error)
+	// proxyrentalDescTrafficUsedBytes is the schema descriptor for traffic_used_bytes field.
+	proxyrentalDescTrafficUsedBytes := proxyrentalFields[7].Descriptor()
+	// proxyrental.DefaultTrafficUsedBytes holds the default value on creation for the traffic_used_bytes field.
+	proxyrental.DefaultTrafficUsedBytes = proxyrentalDescTrafficUsedBytes.Default.(int64)
+	// proxyrentalDescTrafficLimitBytes is the schema descriptor for traffic_limit_bytes field.
+	proxyrentalDescTrafficLimitBytes := proxyrentalFields[8].Descriptor()
+	// proxyrental.DefaultTrafficLimitBytes holds the default value on creation for the traffic_limit_bytes field.
+	proxyrental.DefaultTrafficLimitBytes = proxyrentalDescTrafficLimitBytes.Default.(int64)
+	proxytrafficlogMixin := schema.ProxyTrafficLog{}.Mixin()
+	proxytrafficlogMixinFields0 := proxytrafficlogMixin[0].Fields()
+	_ = proxytrafficlogMixinFields0
+	proxytrafficlogFields := schema.ProxyTrafficLog{}.Fields()
+	_ = proxytrafficlogFields
+	// proxytrafficlogDescCreatedAt is the schema descriptor for created_at field.
+	proxytrafficlogDescCreatedAt := proxytrafficlogMixinFields0[0].Descriptor()
+	// proxytrafficlog.DefaultCreatedAt holds the default value on creation for the created_at field.
+	proxytrafficlog.DefaultCreatedAt = proxytrafficlogDescCreatedAt.Default.(func() time.Time)
+	// proxytrafficlogDescUpdatedAt is the schema descriptor for updated_at field.
+	proxytrafficlogDescUpdatedAt := proxytrafficlogMixinFields0[1].Descriptor()
+	// proxytrafficlog.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	proxytrafficlog.DefaultUpdatedAt = proxytrafficlogDescUpdatedAt.Default.(func() time.Time)
+	// proxytrafficlog.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	proxytrafficlog.UpdateDefaultUpdatedAt = proxytrafficlogDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// proxytrafficlogDescDeltaBytes is the schema descriptor for delta_bytes field.
+	proxytrafficlogDescDeltaBytes := proxytrafficlogFields[1].Descriptor()
+	// proxytrafficlog.DeltaBytesValidator is a validator for the "delta_bytes" field. It is called by the builders before save.
+	proxytrafficlog.DeltaBytesValidator = proxytrafficlogDescDeltaBytes.Validators[0].(func(int64) error)
+	// proxytrafficlogDescNote is the schema descriptor for note field.
+	proxytrafficlogDescNote := proxytrafficlogFields[3].Descriptor()
+	// proxytrafficlog.DefaultNote holds the default value on creation for the note field.
+	proxytrafficlog.DefaultNote = proxytrafficlogDescNote.Default.(string)
 	redeemcodeFields := schema.RedeemCode{}.Fields()
 	_ = redeemcodeFields
 	// redeemcodeDescCode is the schema descriptor for code field.

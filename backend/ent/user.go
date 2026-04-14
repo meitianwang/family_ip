@@ -69,11 +69,15 @@ type UserEdges struct {
 	PromoCodeUsages []*PromoCodeUsage `json:"promo_code_usages,omitempty"`
 	// PaymentOrders holds the value of the payment_orders edge.
 	PaymentOrders []*PaymentOrder `json:"payment_orders,omitempty"`
+	// ProxyRentals holds the value of the proxy_rentals edge.
+	ProxyRentals []*ProxyRental `json:"proxy_rentals,omitempty"`
+	// ProxyTrafficLogs holds the value of the proxy_traffic_logs edge.
+	ProxyTrafficLogs []*ProxyTrafficLog `json:"proxy_traffic_logs,omitempty"`
 	// UserAllowedGroups holds the value of the user_allowed_groups edge.
 	UserAllowedGroups []*UserAllowedGroup `json:"user_allowed_groups,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [9]bool
+	loadedTypes [11]bool
 }
 
 // RedeemCodesOrErr returns the RedeemCodes value or an error if the edge
@@ -148,10 +152,28 @@ func (e UserEdges) PaymentOrdersOrErr() ([]*PaymentOrder, error) {
 	return nil, &NotLoadedError{edge: "payment_orders"}
 }
 
+// ProxyRentalsOrErr returns the ProxyRentals value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) ProxyRentalsOrErr() ([]*ProxyRental, error) {
+	if e.loadedTypes[8] {
+		return e.ProxyRentals, nil
+	}
+	return nil, &NotLoadedError{edge: "proxy_rentals"}
+}
+
+// ProxyTrafficLogsOrErr returns the ProxyTrafficLogs value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) ProxyTrafficLogsOrErr() ([]*ProxyTrafficLog, error) {
+	if e.loadedTypes[9] {
+		return e.ProxyTrafficLogs, nil
+	}
+	return nil, &NotLoadedError{edge: "proxy_traffic_logs"}
+}
+
 // UserAllowedGroupsOrErr returns the UserAllowedGroups value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) UserAllowedGroupsOrErr() ([]*UserAllowedGroup, error) {
-	if e.loadedTypes[8] {
+	if e.loadedTypes[10] {
 		return e.UserAllowedGroups, nil
 	}
 	return nil, &NotLoadedError{edge: "user_allowed_groups"}
@@ -331,6 +353,16 @@ func (_m *User) QueryPromoCodeUsages() *PromoCodeUsageQuery {
 // QueryPaymentOrders queries the "payment_orders" edge of the User entity.
 func (_m *User) QueryPaymentOrders() *PaymentOrderQuery {
 	return NewUserClient(_m.config).QueryPaymentOrders(_m)
+}
+
+// QueryProxyRentals queries the "proxy_rentals" edge of the User entity.
+func (_m *User) QueryProxyRentals() *ProxyRentalQuery {
+	return NewUserClient(_m.config).QueryProxyRentals(_m)
+}
+
+// QueryProxyTrafficLogs queries the "proxy_traffic_logs" edge of the User entity.
+func (_m *User) QueryProxyTrafficLogs() *ProxyTrafficLogQuery {
+	return NewUserClient(_m.config).QueryProxyTrafficLogs(_m)
 }
 
 // QueryUserAllowedGroups queries the "user_allowed_groups" edge of the User entity.

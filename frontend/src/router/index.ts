@@ -210,6 +210,37 @@ const routes: RouteRecordRaw[] = [
       titleKey: 'customPage.title',
     }
   },
+  // ==================== Proxy Routes ====================
+  {
+    path: '/proxy/marketplace',
+    name: 'ProxyMarketplace',
+    component: () => import('@/views/user/ProxyMarketplaceView.vue'),
+    meta: {
+      requiresAuth: true,
+      requiresAdmin: false,
+      title: '家庭 IP 代理'
+    }
+  },
+  {
+    path: '/proxy/rentals',
+    name: 'ProxyMyRentals',
+    component: () => import('@/views/user/ProxyMyRentalsView.vue'),
+    meta: {
+      requiresAuth: true,
+      requiresAdmin: false,
+      title: '我的代理'
+    }
+  },
+  {
+    path: '/proxy/rentals/:id',
+    name: 'ProxyRentalDetail',
+    component: () => import('@/views/user/ProxyRentalDetailView.vue'),
+    meta: {
+      requiresAuth: true,
+      requiresAdmin: false,
+      title: '代理详情'
+    }
+  },
 
   // ==================== Admin Routes ====================
   {
@@ -366,6 +397,37 @@ const routes: RouteRecordRaw[] = [
       title: 'System Settings',
       titleKey: 'admin.settings.title',
       descriptionKey: 'admin.settings.description'
+    }
+  },
+  // ==================== Admin Proxy Routes ====================
+  {
+    path: '/admin/proxy/nodes',
+    name: 'AdminProxyNodes',
+    component: () => import('@/views/admin/ProxyNodesView.vue'),
+    meta: {
+      requiresAuth: true,
+      requiresAdmin: true,
+      title: '代理节点管理'
+    }
+  },
+  {
+    path: '/admin/proxy/products',
+    name: 'AdminProxyProducts',
+    component: () => import('@/views/admin/ProxyProductsView.vue'),
+    meta: {
+      requiresAuth: true,
+      requiresAdmin: true,
+      title: '代理套餐管理'
+    }
+  },
+  {
+    path: '/admin/proxy/rentals',
+    name: 'AdminProxyRentals',
+    component: () => import('@/views/admin/ProxyRentalsView.vue'),
+    meta: {
+      requiresAuth: true,
+      requiresAdmin: true,
+      title: '代理租约管理'
     }
   },
   // ==================== 404 Not Found ====================

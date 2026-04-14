@@ -80,6 +80,21 @@ func initializeApplication(buildInfo handler.BuildInfo) (*Application, error) {
 	announcementReadRepository := repository.NewAnnouncementReadRepository(client)
 	announcementService := service.NewAnnouncementService(announcementRepository, announcementReadRepository, userRepository, userSubscriptionRepository)
 	announcementHandler := handler.NewAnnouncementHandler(announcementService)
+	proxyNodeRepository := repository.NewProxyNodeRepository(client)
+	proxyProductRepository := repository.NewProxyProductRepository(client)
+	proxyRentalRepository := repository.NewProxyRentalRepository(client)
+	proxyCredentialRepository := repository.NewProxyCredentialRepository(client)
+	proxyTrafficLogRepository := repository.NewProxyTrafficLogRepository(client)
+	paymentOrderRepository := repository.NewPaymentOrderRepository(client, db)
+	paymentAuditLogRepository := repository.NewPaymentAuditLogRepository(client)
+	paymentProviderInstanceRepository := repository.NewPaymentProviderInstanceRepository(client)
+	subscriptionPlanRepository := repository.NewSubscriptionPlanRepository(client)
+	paymentConfigService := service.NewPaymentConfigService(settingService)
+	paymentProviderRegistry := service.NewPaymentProviderRegistry()
+	paymentLoadBalancer := service.NewPaymentLoadBalancer(paymentProviderInstanceRepository, paymentOrderRepository, paymentConfigService, secretEncryptor)
+	paymentOrderService := service.NewPaymentOrderService(paymentOrderRepository, paymentAuditLogRepository, paymentProviderInstanceRepository, subscriptionPlanRepository, groupRepository, userRepository, userService, paymentConfigService, paymentProviderRegistry, paymentLoadBalancer, secretEncryptor, client, redeemService, subscriptionService)
+	proxyService := service.ProvideProxyService(client, proxyNodeRepository, proxyProductRepository, proxyRentalRepository, proxyCredentialRepository, proxyTrafficLogRepository, paymentOrderService)
+	proxyAdminHandler := admin.NewProxyAdminHandler(proxyService)
 	dashboardHandler := admin.NewDashboardHandler()
 	userGroupRateRepository := repository.NewUserGroupRateRepository(db)
 	adminService := service.NewAdminService(userRepository, groupRepository, redeemCodeRepository, userGroupRateRepository, settingService, subscriptionService, userSubscriptionRepository)
@@ -104,14 +119,6 @@ func initializeApplication(buildInfo handler.BuildInfo) (*Application, error) {
 	userAttributeValueRepository := repository.NewUserAttributeValueRepository(client)
 	userAttributeService := service.NewUserAttributeService(userAttributeDefinitionRepository, userAttributeValueRepository)
 	userAttributeHandler := admin.NewUserAttributeHandler(userAttributeService)
-	paymentOrderRepository := repository.NewPaymentOrderRepository(client, db)
-	paymentAuditLogRepository := repository.NewPaymentAuditLogRepository(client)
-	paymentProviderInstanceRepository := repository.NewPaymentProviderInstanceRepository(client)
-	subscriptionPlanRepository := repository.NewSubscriptionPlanRepository(client)
-	paymentConfigService := service.NewPaymentConfigService(settingService)
-	paymentProviderRegistry := service.NewPaymentProviderRegistry()
-	paymentLoadBalancer := service.NewPaymentLoadBalancer(paymentProviderInstanceRepository, paymentOrderRepository, paymentConfigService, secretEncryptor)
-	paymentOrderService := service.NewPaymentOrderService(paymentOrderRepository, paymentAuditLogRepository, paymentProviderInstanceRepository, subscriptionPlanRepository, groupRepository, userRepository, userService, paymentConfigService, paymentProviderRegistry, paymentLoadBalancer, secretEncryptor, client, redeemService, subscriptionService)
 	paymentOrderHandler := admin.NewPaymentOrderHandler(paymentOrderService)
 	paymentRefundHandler := admin.NewPaymentRefundHandler(paymentOrderService)
 	paymentConfigHandler := admin.NewPaymentConfigHandler(paymentConfigService)
@@ -120,19 +127,21 @@ func initializeApplication(buildInfo handler.BuildInfo) (*Application, error) {
 	paymentChannelHandler := admin.NewPaymentChannelHandler(paymentChannelRepository)
 	paymentSubscriptionPlanHandler := admin.NewPaymentSubscriptionPlanHandler(subscriptionPlanRepository, paymentOrderService)
 	paymentDashboardHandler := admin.NewPaymentDashboardHandler(paymentOrderService)
-	adminHandlers := handler.ProvideAdminHandlers(dashboardHandler, adminUserHandler, adminAnnouncementHandler, backupHandler, adminRedeemHandler, promoHandler, settingHandler, systemHandler, adminSubscriptionHandler, userAttributeHandler, paymentOrderHandler, paymentRefundHandler, paymentConfigHandler, paymentProviderInstanceHandler, paymentChannelHandler, paymentSubscriptionPlanHandler, paymentDashboardHandler)
+	adminHandlers := handler.ProvideAdminHandlers(proxyAdminHandler, dashboardHandler, adminUserHandler, adminAnnouncementHandler, backupHandler, adminRedeemHandler, promoHandler, settingHandler, systemHandler, adminSubscriptionHandler, userAttributeHandler, paymentOrderHandler, paymentRefundHandler, paymentConfigHandler, paymentProviderInstanceHandler, paymentChannelHandler, paymentSubscriptionPlanHandler, paymentDashboardHandler)
 	handlerSettingHandler := handler.ProvideSettingHandler(settingService, buildInfo)
 	totpHandler := handler.NewTotpHandler(totpService)
 	paymentHandler := handler.NewPaymentHandler(paymentOrderService, paymentConfigService, paymentLoadBalancer, paymentChannelRepository, subscriptionPlanRepository)
 	paymentWebhookHandler := handler.NewPaymentWebhookHandler(paymentOrderService)
-	handlers := handler.ProvideHandlers(authHandler, userHandler, redeemHandler, subscriptionHandler, announcementHandler, adminHandlers, handlerSettingHandler, totpHandler, paymentHandler, paymentWebhookHandler)
+	proxyHandler := handler.NewProxyHandler(proxyService, paymentOrderService)
+	handlers := handler.ProvideHandlers(authHandler, userHandler, redeemHandler, subscriptionHandler, announcementHandler, adminHandlers, handlerSettingHandler, totpHandler, paymentHandler, paymentWebhookHandler, proxyHandler)
 	jwtAuthMiddleware := middleware.NewJWTAuthMiddleware(authService, userService)
 	adminAuthMiddleware := middleware.NewAdminAuthMiddleware(authService, userService, settingService)
 	engine := server.ProvideRouter(configConfig, handlers, jwtAuthMiddleware, adminAuthMiddleware, settingService, redisClient)
 	httpServer := server.ProvideHTTPServer(configConfig, engine)
 	subscriptionExpiryService := service.ProvideSubscriptionExpiryService(userSubscriptionRepository)
 	paymentOrderExpiryService := service.ProvidePaymentOrderExpiryService(paymentOrderRepository, paymentAuditLogRepository, paymentProviderRegistry, paymentProviderInstanceRepository, secretEncryptor)
-	v := provideCleanup(client, redisClient, subscriptionExpiryService, emailQueueService, subscriptionService, backupService, paymentOrderExpiryService)
+	proxyExpiryService := service.ProvideProxyExpiryService(proxyService)
+	v := provideCleanup(client, redisClient, subscriptionExpiryService, emailQueueService, subscriptionService, backupService, paymentOrderExpiryService, proxyExpiryService)
 	application := &Application{
 		Server:  httpServer,
 		Cleanup: v,
@@ -162,6 +171,7 @@ func provideCleanup(
 	subscriptionService *service.SubscriptionService,
 	backupSvc *service.BackupService,
 	paymentOrderExpiry *service.PaymentOrderExpiryService,
+	proxyExpiry *service.ProxyExpiryService,
 ) func() {
 	return func() {
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
@@ -186,6 +196,10 @@ func provideCleanup(
 		if paymentOrderExpiry != nil {
 			paymentOrderExpiry.Stop()
 			log.Println("[Cleanup] PaymentOrderExpiryService stopped")
+		}
+		if proxyExpiry != nil {
+			proxyExpiry.Stop()
+			log.Println("[Cleanup] ProxyExpiryService stopped")
 		}
 
 		if rdb != nil {

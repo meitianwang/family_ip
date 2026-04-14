@@ -18,6 +18,8 @@ import (
 	"github.com/meitianwang/fast-frame/ent/paymentorder"
 	"github.com/meitianwang/fast-frame/ent/predicate"
 	"github.com/meitianwang/fast-frame/ent/promocodeusage"
+	"github.com/meitianwang/fast-frame/ent/proxyrental"
+	"github.com/meitianwang/fast-frame/ent/proxytrafficlog"
 	"github.com/meitianwang/fast-frame/ent/redeemcode"
 	"github.com/meitianwang/fast-frame/ent/user"
 	"github.com/meitianwang/fast-frame/ent/userallowedgroup"
@@ -40,6 +42,8 @@ type UserQuery struct {
 	withAttributeValues       *UserAttributeValueQuery
 	withPromoCodeUsages       *PromoCodeUsageQuery
 	withPaymentOrders         *PaymentOrderQuery
+	withProxyRentals          *ProxyRentalQuery
+	withProxyTrafficLogs      *ProxyTrafficLogQuery
 	withUserAllowedGroups     *UserAllowedGroupQuery
 	modifiers                 []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
@@ -247,6 +251,50 @@ func (_q *UserQuery) QueryPaymentOrders() *PaymentOrderQuery {
 			sqlgraph.From(user.Table, user.FieldID, selector),
 			sqlgraph.To(paymentorder.Table, paymentorder.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, user.PaymentOrdersTable, user.PaymentOrdersColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryProxyRentals chains the current query on the "proxy_rentals" edge.
+func (_q *UserQuery) QueryProxyRentals() *ProxyRentalQuery {
+	query := (&ProxyRentalClient{config: _q.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := _q.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := _q.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, selector),
+			sqlgraph.To(proxyrental.Table, proxyrental.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.ProxyRentalsTable, user.ProxyRentalsColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryProxyTrafficLogs chains the current query on the "proxy_traffic_logs" edge.
+func (_q *UserQuery) QueryProxyTrafficLogs() *ProxyTrafficLogQuery {
+	query := (&ProxyTrafficLogClient{config: _q.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := _q.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := _q.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, selector),
+			sqlgraph.To(proxytrafficlog.Table, proxytrafficlog.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.ProxyTrafficLogsTable, user.ProxyTrafficLogsColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
 		return fromU, nil
@@ -476,6 +524,8 @@ func (_q *UserQuery) Clone() *UserQuery {
 		withAttributeValues:       _q.withAttributeValues.Clone(),
 		withPromoCodeUsages:       _q.withPromoCodeUsages.Clone(),
 		withPaymentOrders:         _q.withPaymentOrders.Clone(),
+		withProxyRentals:          _q.withProxyRentals.Clone(),
+		withProxyTrafficLogs:      _q.withProxyTrafficLogs.Clone(),
 		withUserAllowedGroups:     _q.withUserAllowedGroups.Clone(),
 		// clone intermediate query.
 		sql:  _q.sql.Clone(),
@@ -571,6 +621,28 @@ func (_q *UserQuery) WithPaymentOrders(opts ...func(*PaymentOrderQuery)) *UserQu
 	return _q
 }
 
+// WithProxyRentals tells the query-builder to eager-load the nodes that are connected to
+// the "proxy_rentals" edge. The optional arguments are used to configure the query builder of the edge.
+func (_q *UserQuery) WithProxyRentals(opts ...func(*ProxyRentalQuery)) *UserQuery {
+	query := (&ProxyRentalClient{config: _q.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	_q.withProxyRentals = query
+	return _q
+}
+
+// WithProxyTrafficLogs tells the query-builder to eager-load the nodes that are connected to
+// the "proxy_traffic_logs" edge. The optional arguments are used to configure the query builder of the edge.
+func (_q *UserQuery) WithProxyTrafficLogs(opts ...func(*ProxyTrafficLogQuery)) *UserQuery {
+	query := (&ProxyTrafficLogClient{config: _q.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	_q.withProxyTrafficLogs = query
+	return _q
+}
+
 // WithUserAllowedGroups tells the query-builder to eager-load the nodes that are connected to
 // the "user_allowed_groups" edge. The optional arguments are used to configure the query builder of the edge.
 func (_q *UserQuery) WithUserAllowedGroups(opts ...func(*UserAllowedGroupQuery)) *UserQuery {
@@ -660,7 +732,7 @@ func (_q *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 	var (
 		nodes       = []*User{}
 		_spec       = _q.querySpec()
-		loadedTypes = [9]bool{
+		loadedTypes = [11]bool{
 			_q.withRedeemCodes != nil,
 			_q.withSubscriptions != nil,
 			_q.withAssignedSubscriptions != nil,
@@ -669,6 +741,8 @@ func (_q *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 			_q.withAttributeValues != nil,
 			_q.withPromoCodeUsages != nil,
 			_q.withPaymentOrders != nil,
+			_q.withProxyRentals != nil,
+			_q.withProxyTrafficLogs != nil,
 			_q.withUserAllowedGroups != nil,
 		}
 	)
@@ -748,6 +822,20 @@ func (_q *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 		if err := _q.loadPaymentOrders(ctx, query, nodes,
 			func(n *User) { n.Edges.PaymentOrders = []*PaymentOrder{} },
 			func(n *User, e *PaymentOrder) { n.Edges.PaymentOrders = append(n.Edges.PaymentOrders, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := _q.withProxyRentals; query != nil {
+		if err := _q.loadProxyRentals(ctx, query, nodes,
+			func(n *User) { n.Edges.ProxyRentals = []*ProxyRental{} },
+			func(n *User, e *ProxyRental) { n.Edges.ProxyRentals = append(n.Edges.ProxyRentals, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := _q.withProxyTrafficLogs; query != nil {
+		if err := _q.loadProxyTrafficLogs(ctx, query, nodes,
+			func(n *User) { n.Edges.ProxyTrafficLogs = []*ProxyTrafficLog{} },
+			func(n *User, e *ProxyTrafficLog) { n.Edges.ProxyTrafficLogs = append(n.Edges.ProxyTrafficLogs, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -1033,6 +1121,66 @@ func (_q *UserQuery) loadPaymentOrders(ctx context.Context, query *PaymentOrderQ
 		node, ok := nodeids[fk]
 		if !ok {
 			return fmt.Errorf(`unexpected referenced foreign-key "user_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (_q *UserQuery) loadProxyRentals(ctx context.Context, query *ProxyRentalQuery, nodes []*User, init func(*User), assign func(*User, *ProxyRental)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int64]*User)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(proxyrental.FieldUserID)
+	}
+	query.Where(predicate.ProxyRental(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(user.ProxyRentalsColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.UserID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "user_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (_q *UserQuery) loadProxyTrafficLogs(ctx context.Context, query *ProxyTrafficLogQuery, nodes []*User, init func(*User), assign func(*User, *ProxyTrafficLog)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int64]*User)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(proxytrafficlog.FieldOperatorID)
+	}
+	query.Where(predicate.ProxyTrafficLog(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(user.ProxyTrafficLogsColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.OperatorID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "operator_id" returned %v for node %v`, fk, n.ID)
 		}
 		assign(node, n)
 	}

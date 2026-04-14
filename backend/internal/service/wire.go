@@ -4,6 +4,7 @@ import (
 	"context"
 	"time"
 
+	dbent "github.com/meitianwang/fast-frame/ent"
 	"github.com/meitianwang/fast-frame/internal/config"
 	"github.com/google/wire"
 )
@@ -119,6 +120,28 @@ func (n *noopBillingCache) GetUserBalance(_ context.Context, _ int64) (float64, 
 func (n *noopBillingCache) SetUserBalance(_ context.Context, _ int64, _ float64) error           { return nil }
 func (n *noopBillingCache) InvalidateUserBalance(_ context.Context, _ int64) error               { return nil }
 
+// ProvideProxyService creates ProxyService and wires it with PaymentOrderService.
+func ProvideProxyService(
+	entClient *dbent.Client,
+	nodeRepo ProxyNodeRepository,
+	productRepo ProxyProductRepository,
+	rentalRepo ProxyRentalRepository,
+	credRepo ProxyCredentialRepository,
+	trafficRepo ProxyTrafficLogRepository,
+	paymentService *PaymentOrderService,
+) *ProxyService {
+	svc := NewProxyService(entClient, nodeRepo, productRepo, rentalRepo, credRepo, trafficRepo)
+	paymentService.SetProxyService(svc)
+	return svc
+}
+
+// ProvideProxyExpiryService creates and starts the proxy rental expiry background goroutine.
+func ProvideProxyExpiryService(proxyService *ProxyService) *ProxyExpiryService {
+	svc := NewProxyExpiryService(proxyService)
+	svc.Start()
+	return svc
+}
+
 // ProviderSet is the Wire provider set for all services
 var ProviderSet = wire.NewSet(
 	// Core services
@@ -151,4 +174,8 @@ var ProviderSet = wire.NewSet(
 	NewPaymentLoadBalancer,
 	NewPaymentOrderService,
 	ProvidePaymentOrderExpiryService,
+
+	// Proxy services
+	ProvideProxyService,
+	ProvideProxyExpiryService,
 )

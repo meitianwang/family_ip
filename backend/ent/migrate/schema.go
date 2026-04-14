@@ -479,6 +479,218 @@ var (
 			},
 		},
 	}
+	// ProxyCredentialsColumns holds the columns for the "proxy_credentials" table.
+	ProxyCredentialsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt64, Increment: true},
+		{Name: "created_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamptz"}},
+		{Name: "updated_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamptz"}},
+		{Name: "http_username", Type: field.TypeString, Size: 64},
+		{Name: "http_password", Type: field.TypeString, Size: 64},
+		{Name: "vless_uuid", Type: field.TypeString, Size: 36},
+		{Name: "vless_link", Type: field.TypeString, SchemaType: map[string]string{"postgres": "text"}},
+		{Name: "rental_id", Type: field.TypeInt64, Unique: true},
+	}
+	// ProxyCredentialsTable holds the schema information for the "proxy_credentials" table.
+	ProxyCredentialsTable = &schema.Table{
+		Name:       "proxy_credentials",
+		Columns:    ProxyCredentialsColumns,
+		PrimaryKey: []*schema.Column{ProxyCredentialsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "proxy_credentials_proxy_rentals_credential",
+				Columns:    []*schema.Column{ProxyCredentialsColumns[7]},
+				RefColumns: []*schema.Column{ProxyRentalsColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "proxycredential_rental_id",
+				Unique:  false,
+				Columns: []*schema.Column{ProxyCredentialsColumns[7]},
+			},
+		},
+	}
+	// ProxyNodesColumns holds the columns for the "proxy_nodes" table.
+	ProxyNodesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt64, Increment: true},
+		{Name: "created_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamptz"}},
+		{Name: "updated_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamptz"}},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, SchemaType: map[string]string{"postgres": "timestamptz"}},
+		{Name: "ip_address", Type: field.TypeString, Size: 45},
+		{Name: "country", Type: field.TypeString, Size: 100, Default: ""},
+		{Name: "country_code", Type: field.TypeString, Size: 2, Default: ""},
+		{Name: "city", Type: field.TypeString, Size: 100, Default: ""},
+		{Name: "isp", Type: field.TypeString, Size: 200, Default: ""},
+		{Name: "http_port", Type: field.TypeInt, Default: 3128},
+		{Name: "vless_port", Type: field.TypeInt, Default: 443},
+		{Name: "vless_network", Type: field.TypeString, Size: 10, Default: "tcp"},
+		{Name: "vless_tls", Type: field.TypeBool, Default: false},
+		{Name: "vless_sni", Type: field.TypeString, Size: 255, Default: ""},
+		{Name: "vless_ws_path", Type: field.TypeString, Size: 255, Default: "/"},
+		{Name: "tags", Type: field.TypeJSON},
+		{Name: "status", Type: field.TypeString, Size: 20, Default: "available"},
+		{Name: "description", Type: field.TypeString, Default: "", SchemaType: map[string]string{"postgres": "text"}},
+	}
+	// ProxyNodesTable holds the schema information for the "proxy_nodes" table.
+	ProxyNodesTable = &schema.Table{
+		Name:       "proxy_nodes",
+		Columns:    ProxyNodesColumns,
+		PrimaryKey: []*schema.Column{ProxyNodesColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "proxynode_status",
+				Unique:  false,
+				Columns: []*schema.Column{ProxyNodesColumns[16]},
+			},
+			{
+				Name:    "proxynode_country_code",
+				Unique:  false,
+				Columns: []*schema.Column{ProxyNodesColumns[6]},
+			},
+			{
+				Name:    "proxynode_deleted_at",
+				Unique:  false,
+				Columns: []*schema.Column{ProxyNodesColumns[3]},
+			},
+		},
+	}
+	// ProxyProductsColumns holds the columns for the "proxy_products" table.
+	ProxyProductsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt64, Increment: true},
+		{Name: "created_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamptz"}},
+		{Name: "updated_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamptz"}},
+		{Name: "name", Type: field.TypeString, Size: 100},
+		{Name: "description", Type: field.TypeString, Default: "", SchemaType: map[string]string{"postgres": "text"}},
+		{Name: "duration_days", Type: field.TypeInt},
+		{Name: "traffic_limit_gb", Type: field.TypeInt, Default: 0},
+		{Name: "price", Type: field.TypeOther, SchemaType: map[string]string{"postgres": "decimal(10,2)"}},
+		{Name: "sort_order", Type: field.TypeInt, Default: 0},
+		{Name: "is_active", Type: field.TypeBool, Default: true},
+	}
+	// ProxyProductsTable holds the schema information for the "proxy_products" table.
+	ProxyProductsTable = &schema.Table{
+		Name:       "proxy_products",
+		Columns:    ProxyProductsColumns,
+		PrimaryKey: []*schema.Column{ProxyProductsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "proxyproduct_is_active",
+				Unique:  false,
+				Columns: []*schema.Column{ProxyProductsColumns[9]},
+			},
+			{
+				Name:    "proxyproduct_sort_order",
+				Unique:  false,
+				Columns: []*schema.Column{ProxyProductsColumns[8]},
+			},
+		},
+	}
+	// ProxyRentalsColumns holds the columns for the "proxy_rentals" table.
+	ProxyRentalsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt64, Increment: true},
+		{Name: "created_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamptz"}},
+		{Name: "updated_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamptz"}},
+		{Name: "payment_order_id", Type: field.TypeInt64, Nullable: true},
+		{Name: "status", Type: field.TypeString, Size: 20, Default: "pending_payment"},
+		{Name: "started_at", Type: field.TypeTime, Nullable: true, SchemaType: map[string]string{"postgres": "timestamptz"}},
+		{Name: "expires_at", Type: field.TypeTime, Nullable: true, SchemaType: map[string]string{"postgres": "timestamptz"}},
+		{Name: "traffic_used_bytes", Type: field.TypeInt64, Default: 0},
+		{Name: "traffic_limit_bytes", Type: field.TypeInt64, Default: 0},
+		{Name: "node_id", Type: field.TypeInt64},
+		{Name: "product_id", Type: field.TypeInt64},
+		{Name: "user_id", Type: field.TypeInt64},
+	}
+	// ProxyRentalsTable holds the schema information for the "proxy_rentals" table.
+	ProxyRentalsTable = &schema.Table{
+		Name:       "proxy_rentals",
+		Columns:    ProxyRentalsColumns,
+		PrimaryKey: []*schema.Column{ProxyRentalsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "proxy_rentals_proxy_nodes_rentals",
+				Columns:    []*schema.Column{ProxyRentalsColumns[9]},
+				RefColumns: []*schema.Column{ProxyNodesColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "proxy_rentals_proxy_products_rentals",
+				Columns:    []*schema.Column{ProxyRentalsColumns[10]},
+				RefColumns: []*schema.Column{ProxyProductsColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "proxy_rentals_users_proxy_rentals",
+				Columns:    []*schema.Column{ProxyRentalsColumns[11]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "proxyrental_user_id_status",
+				Unique:  false,
+				Columns: []*schema.Column{ProxyRentalsColumns[11], ProxyRentalsColumns[4]},
+			},
+			{
+				Name:    "proxyrental_node_id_status",
+				Unique:  false,
+				Columns: []*schema.Column{ProxyRentalsColumns[9], ProxyRentalsColumns[4]},
+			},
+			{
+				Name:    "proxyrental_expires_at",
+				Unique:  false,
+				Columns: []*schema.Column{ProxyRentalsColumns[6]},
+			},
+			{
+				Name:    "proxyrental_payment_order_id",
+				Unique:  false,
+				Columns: []*schema.Column{ProxyRentalsColumns[3]},
+			},
+		},
+	}
+	// ProxyTrafficLogsColumns holds the columns for the "proxy_traffic_logs" table.
+	ProxyTrafficLogsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt64, Increment: true},
+		{Name: "created_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamptz"}},
+		{Name: "updated_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamptz"}},
+		{Name: "delta_bytes", Type: field.TypeInt64},
+		{Name: "note", Type: field.TypeString, Default: "", SchemaType: map[string]string{"postgres": "text"}},
+		{Name: "rental_id", Type: field.TypeInt64},
+		{Name: "operator_id", Type: field.TypeInt64},
+	}
+	// ProxyTrafficLogsTable holds the schema information for the "proxy_traffic_logs" table.
+	ProxyTrafficLogsTable = &schema.Table{
+		Name:       "proxy_traffic_logs",
+		Columns:    ProxyTrafficLogsColumns,
+		PrimaryKey: []*schema.Column{ProxyTrafficLogsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "proxy_traffic_logs_proxy_rentals_traffic_logs",
+				Columns:    []*schema.Column{ProxyTrafficLogsColumns[5]},
+				RefColumns: []*schema.Column{ProxyRentalsColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "proxy_traffic_logs_users_proxy_traffic_logs",
+				Columns:    []*schema.Column{ProxyTrafficLogsColumns[6]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "proxytrafficlog_rental_id",
+				Unique:  false,
+				Columns: []*schema.Column{ProxyTrafficLogsColumns[5]},
+			},
+			{
+				Name:    "proxytrafficlog_created_at",
+				Unique:  false,
+				Columns: []*schema.Column{ProxyTrafficLogsColumns[1]},
+			},
+		},
+	}
 	// RedeemCodesColumns holds the columns for the "redeem_codes" table.
 	RedeemCodesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt64, Increment: true},
@@ -860,6 +1072,11 @@ var (
 		PaymentProviderInstancesTable,
 		PromoCodesTable,
 		PromoCodeUsagesTable,
+		ProxyCredentialsTable,
+		ProxyNodesTable,
+		ProxyProductsTable,
+		ProxyRentalsTable,
+		ProxyTrafficLogsTable,
 		RedeemCodesTable,
 		SecuritySecretsTable,
 		SettingsTable,
@@ -911,6 +1128,27 @@ func init() {
 	PromoCodeUsagesTable.ForeignKeys[1].RefTable = UsersTable
 	PromoCodeUsagesTable.Annotation = &entsql.Annotation{
 		Table: "promo_code_usages",
+	}
+	ProxyCredentialsTable.ForeignKeys[0].RefTable = ProxyRentalsTable
+	ProxyCredentialsTable.Annotation = &entsql.Annotation{
+		Table: "proxy_credentials",
+	}
+	ProxyNodesTable.Annotation = &entsql.Annotation{
+		Table: "proxy_nodes",
+	}
+	ProxyProductsTable.Annotation = &entsql.Annotation{
+		Table: "proxy_products",
+	}
+	ProxyRentalsTable.ForeignKeys[0].RefTable = ProxyNodesTable
+	ProxyRentalsTable.ForeignKeys[1].RefTable = ProxyProductsTable
+	ProxyRentalsTable.ForeignKeys[2].RefTable = UsersTable
+	ProxyRentalsTable.Annotation = &entsql.Annotation{
+		Table: "proxy_rentals",
+	}
+	ProxyTrafficLogsTable.ForeignKeys[0].RefTable = ProxyRentalsTable
+	ProxyTrafficLogsTable.ForeignKeys[1].RefTable = UsersTable
+	ProxyTrafficLogsTable.Annotation = &entsql.Annotation{
+		Table: "proxy_traffic_logs",
 	}
 	RedeemCodesTable.ForeignKeys[0].RefTable = GroupsTable
 	RedeemCodesTable.ForeignKeys[1].RefTable = UsersTable

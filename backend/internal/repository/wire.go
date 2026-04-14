@@ -27,6 +27,13 @@ var ProviderSet = wire.NewSet(
 	NewUserAttributeValueRepository,
 	NewUserGroupRateRepository,
 
+	// Proxy repositories
+	NewProxyNodeRepository,
+	NewProxyProductRepository,
+	NewProxyRentalRepository,
+	NewProxyCredentialRepository,
+	NewProxyTrafficLogRepository,
+
 	// Payment repositories
 	NewPaymentOrderRepository,
 	NewPaymentAuditLogRepository,

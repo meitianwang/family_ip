@@ -52,6 +52,30 @@ func RegisterAdminRoutes(
 
 		// 支付管理
 		registerPaymentAdminRoutes(admin, h)
+
+		// 代理 IP 管理
+		registerProxyAdminRoutes(admin, h)
+	}
+}
+
+func registerProxyAdminRoutes(admin *gin.RouterGroup, h *handler.Handlers) {
+	proxy := admin.Group("/proxy")
+	{
+		proxy.GET("/nodes", h.Admin.Proxy.ListNodes)
+		proxy.POST("/nodes", h.Admin.Proxy.CreateNode)
+		proxy.PUT("/nodes/:id", h.Admin.Proxy.UpdateNode)
+		proxy.DELETE("/nodes/:id", h.Admin.Proxy.DeleteNode)
+
+		proxy.GET("/products", h.Admin.Proxy.ListProducts)
+		proxy.POST("/products", h.Admin.Proxy.CreateProduct)
+		proxy.PUT("/products/:id", h.Admin.Proxy.UpdateProduct)
+		proxy.DELETE("/products/:id", h.Admin.Proxy.DeleteProduct)
+
+		proxy.GET("/rentals", h.Admin.Proxy.ListRentals)
+		proxy.GET("/rentals/:id", h.Admin.Proxy.GetRental)
+		proxy.POST("/rentals/:id/traffic", h.Admin.Proxy.UpdateTraffic)
+		proxy.GET("/rentals/:id/traffic", h.Admin.Proxy.GetTrafficLogs)
+		proxy.POST("/rentals/:id/expire", h.Admin.Proxy.ForceExpire)
 	}
 }
 

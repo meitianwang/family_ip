@@ -59,6 +59,10 @@ const (
 	EdgePromoCodeUsages = "promo_code_usages"
 	// EdgePaymentOrders holds the string denoting the payment_orders edge name in mutations.
 	EdgePaymentOrders = "payment_orders"
+	// EdgeProxyRentals holds the string denoting the proxy_rentals edge name in mutations.
+	EdgeProxyRentals = "proxy_rentals"
+	// EdgeProxyTrafficLogs holds the string denoting the proxy_traffic_logs edge name in mutations.
+	EdgeProxyTrafficLogs = "proxy_traffic_logs"
 	// EdgeUserAllowedGroups holds the string denoting the user_allowed_groups edge name in mutations.
 	EdgeUserAllowedGroups = "user_allowed_groups"
 	// Table holds the table name of the user in the database.
@@ -117,6 +121,20 @@ const (
 	PaymentOrdersInverseTable = "payment_orders"
 	// PaymentOrdersColumn is the table column denoting the payment_orders relation/edge.
 	PaymentOrdersColumn = "user_id"
+	// ProxyRentalsTable is the table that holds the proxy_rentals relation/edge.
+	ProxyRentalsTable = "proxy_rentals"
+	// ProxyRentalsInverseTable is the table name for the ProxyRental entity.
+	// It exists in this package in order to avoid circular dependency with the "proxyrental" package.
+	ProxyRentalsInverseTable = "proxy_rentals"
+	// ProxyRentalsColumn is the table column denoting the proxy_rentals relation/edge.
+	ProxyRentalsColumn = "user_id"
+	// ProxyTrafficLogsTable is the table that holds the proxy_traffic_logs relation/edge.
+	ProxyTrafficLogsTable = "proxy_traffic_logs"
+	// ProxyTrafficLogsInverseTable is the table name for the ProxyTrafficLog entity.
+	// It exists in this package in order to avoid circular dependency with the "proxytrafficlog" package.
+	ProxyTrafficLogsInverseTable = "proxy_traffic_logs"
+	// ProxyTrafficLogsColumn is the table column denoting the proxy_traffic_logs relation/edge.
+	ProxyTrafficLogsColumn = "operator_id"
 	// UserAllowedGroupsTable is the table that holds the user_allowed_groups relation/edge.
 	UserAllowedGroupsTable = "user_allowed_groups"
 	// UserAllowedGroupsInverseTable is the table name for the UserAllowedGroup entity.
@@ -391,6 +409,34 @@ func ByPaymentOrders(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	}
 }
 
+// ByProxyRentalsCount orders the results by proxy_rentals count.
+func ByProxyRentalsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newProxyRentalsStep(), opts...)
+	}
+}
+
+// ByProxyRentals orders the results by proxy_rentals terms.
+func ByProxyRentals(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newProxyRentalsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
+// ByProxyTrafficLogsCount orders the results by proxy_traffic_logs count.
+func ByProxyTrafficLogsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newProxyTrafficLogsStep(), opts...)
+	}
+}
+
+// ByProxyTrafficLogs orders the results by proxy_traffic_logs terms.
+func ByProxyTrafficLogs(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newProxyTrafficLogsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
 // ByUserAllowedGroupsCount orders the results by user_allowed_groups count.
 func ByUserAllowedGroupsCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
@@ -458,6 +504,20 @@ func newPaymentOrdersStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(PaymentOrdersInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, PaymentOrdersTable, PaymentOrdersColumn),
+	)
+}
+func newProxyRentalsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(ProxyRentalsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, ProxyRentalsTable, ProxyRentalsColumn),
+	)
+}
+func newProxyTrafficLogsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(ProxyTrafficLogsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, ProxyTrafficLogsTable, ProxyTrafficLogsColumn),
 	)
 }
 func newUserAllowedGroupsStep() *sqlgraph.Step {

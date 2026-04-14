@@ -6,6 +6,7 @@ import (
 
 // AdminHandlers contains all admin-related HTTP handlers
 type AdminHandlers struct {
+	Proxy                 *admin.ProxyAdminHandler
 	Dashboard             *admin.DashboardHandler
 	User                  *admin.UserHandler
 	Announcement          *admin.AnnouncementHandler
@@ -37,6 +38,7 @@ type Handlers struct {
 	Totp           *TotpHandler
 	Payment        *PaymentHandler
 	PaymentWebhook *PaymentWebhookHandler
+	Proxy          *ProxyHandler
 }
 
 // BuildInfo contains build-time information

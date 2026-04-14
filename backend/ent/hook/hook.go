@@ -129,6 +129,66 @@ func (f PromoCodeUsageFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Val
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.PromoCodeUsageMutation", m)
 }
 
+// The ProxyCredentialFunc type is an adapter to allow the use of ordinary
+// function as ProxyCredential mutator.
+type ProxyCredentialFunc func(context.Context, *ent.ProxyCredentialMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f ProxyCredentialFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.ProxyCredentialMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ProxyCredentialMutation", m)
+}
+
+// The ProxyNodeFunc type is an adapter to allow the use of ordinary
+// function as ProxyNode mutator.
+type ProxyNodeFunc func(context.Context, *ent.ProxyNodeMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f ProxyNodeFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.ProxyNodeMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ProxyNodeMutation", m)
+}
+
+// The ProxyProductFunc type is an adapter to allow the use of ordinary
+// function as ProxyProduct mutator.
+type ProxyProductFunc func(context.Context, *ent.ProxyProductMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f ProxyProductFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.ProxyProductMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ProxyProductMutation", m)
+}
+
+// The ProxyRentalFunc type is an adapter to allow the use of ordinary
+// function as ProxyRental mutator.
+type ProxyRentalFunc func(context.Context, *ent.ProxyRentalMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f ProxyRentalFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.ProxyRentalMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ProxyRentalMutation", m)
+}
+
+// The ProxyTrafficLogFunc type is an adapter to allow the use of ordinary
+// function as ProxyTrafficLog mutator.
+type ProxyTrafficLogFunc func(context.Context, *ent.ProxyTrafficLogMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f ProxyTrafficLogFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.ProxyTrafficLogMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ProxyTrafficLogMutation", m)
+}
+
 // The RedeemCodeFunc type is an adapter to allow the use of ordinary
 // function as RedeemCode mutator.
 type RedeemCodeFunc func(context.Context, *ent.RedeemCodeMutation) (ent.Value, error)

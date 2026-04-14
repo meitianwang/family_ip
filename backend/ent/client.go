@@ -25,6 +25,11 @@ import (
 	"github.com/meitianwang/fast-frame/ent/paymentproviderinstance"
 	"github.com/meitianwang/fast-frame/ent/promocode"
 	"github.com/meitianwang/fast-frame/ent/promocodeusage"
+	"github.com/meitianwang/fast-frame/ent/proxycredential"
+	"github.com/meitianwang/fast-frame/ent/proxynode"
+	"github.com/meitianwang/fast-frame/ent/proxyproduct"
+	"github.com/meitianwang/fast-frame/ent/proxyrental"
+	"github.com/meitianwang/fast-frame/ent/proxytrafficlog"
 	"github.com/meitianwang/fast-frame/ent/redeemcode"
 	"github.com/meitianwang/fast-frame/ent/securitysecret"
 	"github.com/meitianwang/fast-frame/ent/setting"
@@ -63,6 +68,16 @@ type Client struct {
 	PromoCode *PromoCodeClient
 	// PromoCodeUsage is the client for interacting with the PromoCodeUsage builders.
 	PromoCodeUsage *PromoCodeUsageClient
+	// ProxyCredential is the client for interacting with the ProxyCredential builders.
+	ProxyCredential *ProxyCredentialClient
+	// ProxyNode is the client for interacting with the ProxyNode builders.
+	ProxyNode *ProxyNodeClient
+	// ProxyProduct is the client for interacting with the ProxyProduct builders.
+	ProxyProduct *ProxyProductClient
+	// ProxyRental is the client for interacting with the ProxyRental builders.
+	ProxyRental *ProxyRentalClient
+	// ProxyTrafficLog is the client for interacting with the ProxyTrafficLog builders.
+	ProxyTrafficLog *ProxyTrafficLogClient
 	// RedeemCode is the client for interacting with the RedeemCode builders.
 	RedeemCode *RedeemCodeClient
 	// SecuritySecret is the client for interacting with the SecuritySecret builders.
@@ -102,6 +117,11 @@ func (c *Client) init() {
 	c.PaymentProviderInstance = NewPaymentProviderInstanceClient(c.config)
 	c.PromoCode = NewPromoCodeClient(c.config)
 	c.PromoCodeUsage = NewPromoCodeUsageClient(c.config)
+	c.ProxyCredential = NewProxyCredentialClient(c.config)
+	c.ProxyNode = NewProxyNodeClient(c.config)
+	c.ProxyProduct = NewProxyProductClient(c.config)
+	c.ProxyRental = NewProxyRentalClient(c.config)
+	c.ProxyTrafficLog = NewProxyTrafficLogClient(c.config)
 	c.RedeemCode = NewRedeemCodeClient(c.config)
 	c.SecuritySecret = NewSecuritySecretClient(c.config)
 	c.Setting = NewSettingClient(c.config)
@@ -213,6 +233,11 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		PaymentProviderInstance: NewPaymentProviderInstanceClient(cfg),
 		PromoCode:               NewPromoCodeClient(cfg),
 		PromoCodeUsage:          NewPromoCodeUsageClient(cfg),
+		ProxyCredential:         NewProxyCredentialClient(cfg),
+		ProxyNode:               NewProxyNodeClient(cfg),
+		ProxyProduct:            NewProxyProductClient(cfg),
+		ProxyRental:             NewProxyRentalClient(cfg),
+		ProxyTrafficLog:         NewProxyTrafficLogClient(cfg),
 		RedeemCode:              NewRedeemCodeClient(cfg),
 		SecuritySecret:          NewSecuritySecretClient(cfg),
 		Setting:                 NewSettingClient(cfg),
@@ -251,6 +276,11 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		PaymentProviderInstance: NewPaymentProviderInstanceClient(cfg),
 		PromoCode:               NewPromoCodeClient(cfg),
 		PromoCodeUsage:          NewPromoCodeUsageClient(cfg),
+		ProxyCredential:         NewProxyCredentialClient(cfg),
+		ProxyNode:               NewProxyNodeClient(cfg),
+		ProxyProduct:            NewProxyProductClient(cfg),
+		ProxyRental:             NewProxyRentalClient(cfg),
+		ProxyTrafficLog:         NewProxyTrafficLogClient(cfg),
 		RedeemCode:              NewRedeemCodeClient(cfg),
 		SecuritySecret:          NewSecuritySecretClient(cfg),
 		Setting:                 NewSettingClient(cfg),
@@ -291,7 +321,8 @@ func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
 		c.Announcement, c.AnnouncementRead, c.Group, c.IdempotencyRecord,
 		c.PaymentAuditLog, c.PaymentChannel, c.PaymentOrder, c.PaymentProviderInstance,
-		c.PromoCode, c.PromoCodeUsage, c.RedeemCode, c.SecuritySecret, c.Setting,
+		c.PromoCode, c.PromoCodeUsage, c.ProxyCredential, c.ProxyNode, c.ProxyProduct,
+		c.ProxyRental, c.ProxyTrafficLog, c.RedeemCode, c.SecuritySecret, c.Setting,
 		c.SubscriptionPlan, c.User, c.UserAllowedGroup, c.UserAttributeDefinition,
 		c.UserAttributeValue, c.UserSubscription,
 	} {
@@ -305,7 +336,8 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
 		c.Announcement, c.AnnouncementRead, c.Group, c.IdempotencyRecord,
 		c.PaymentAuditLog, c.PaymentChannel, c.PaymentOrder, c.PaymentProviderInstance,
-		c.PromoCode, c.PromoCodeUsage, c.RedeemCode, c.SecuritySecret, c.Setting,
+		c.PromoCode, c.PromoCodeUsage, c.ProxyCredential, c.ProxyNode, c.ProxyProduct,
+		c.ProxyRental, c.ProxyTrafficLog, c.RedeemCode, c.SecuritySecret, c.Setting,
 		c.SubscriptionPlan, c.User, c.UserAllowedGroup, c.UserAttributeDefinition,
 		c.UserAttributeValue, c.UserSubscription,
 	} {
@@ -336,6 +368,16 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.PromoCode.mutate(ctx, m)
 	case *PromoCodeUsageMutation:
 		return c.PromoCodeUsage.mutate(ctx, m)
+	case *ProxyCredentialMutation:
+		return c.ProxyCredential.mutate(ctx, m)
+	case *ProxyNodeMutation:
+		return c.ProxyNode.mutate(ctx, m)
+	case *ProxyProductMutation:
+		return c.ProxyProduct.mutate(ctx, m)
+	case *ProxyRentalMutation:
+		return c.ProxyRental.mutate(ctx, m)
+	case *ProxyTrafficLogMutation:
+		return c.ProxyTrafficLog.mutate(ctx, m)
 	case *RedeemCodeMutation:
 		return c.RedeemCode.mutate(ctx, m)
 	case *SecuritySecretMutation:
@@ -1995,6 +2037,833 @@ func (c *PromoCodeUsageClient) mutate(ctx context.Context, m *PromoCodeUsageMuta
 	}
 }
 
+// ProxyCredentialClient is a client for the ProxyCredential schema.
+type ProxyCredentialClient struct {
+	config
+}
+
+// NewProxyCredentialClient returns a client for the ProxyCredential from the given config.
+func NewProxyCredentialClient(c config) *ProxyCredentialClient {
+	return &ProxyCredentialClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `proxycredential.Hooks(f(g(h())))`.
+func (c *ProxyCredentialClient) Use(hooks ...Hook) {
+	c.hooks.ProxyCredential = append(c.hooks.ProxyCredential, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `proxycredential.Intercept(f(g(h())))`.
+func (c *ProxyCredentialClient) Intercept(interceptors ...Interceptor) {
+	c.inters.ProxyCredential = append(c.inters.ProxyCredential, interceptors...)
+}
+
+// Create returns a builder for creating a ProxyCredential entity.
+func (c *ProxyCredentialClient) Create() *ProxyCredentialCreate {
+	mutation := newProxyCredentialMutation(c.config, OpCreate)
+	return &ProxyCredentialCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of ProxyCredential entities.
+func (c *ProxyCredentialClient) CreateBulk(builders ...*ProxyCredentialCreate) *ProxyCredentialCreateBulk {
+	return &ProxyCredentialCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *ProxyCredentialClient) MapCreateBulk(slice any, setFunc func(*ProxyCredentialCreate, int)) *ProxyCredentialCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &ProxyCredentialCreateBulk{err: fmt.Errorf("calling to ProxyCredentialClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*ProxyCredentialCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &ProxyCredentialCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for ProxyCredential.
+func (c *ProxyCredentialClient) Update() *ProxyCredentialUpdate {
+	mutation := newProxyCredentialMutation(c.config, OpUpdate)
+	return &ProxyCredentialUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *ProxyCredentialClient) UpdateOne(_m *ProxyCredential) *ProxyCredentialUpdateOne {
+	mutation := newProxyCredentialMutation(c.config, OpUpdateOne, withProxyCredential(_m))
+	return &ProxyCredentialUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *ProxyCredentialClient) UpdateOneID(id int64) *ProxyCredentialUpdateOne {
+	mutation := newProxyCredentialMutation(c.config, OpUpdateOne, withProxyCredentialID(id))
+	return &ProxyCredentialUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for ProxyCredential.
+func (c *ProxyCredentialClient) Delete() *ProxyCredentialDelete {
+	mutation := newProxyCredentialMutation(c.config, OpDelete)
+	return &ProxyCredentialDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *ProxyCredentialClient) DeleteOne(_m *ProxyCredential) *ProxyCredentialDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *ProxyCredentialClient) DeleteOneID(id int64) *ProxyCredentialDeleteOne {
+	builder := c.Delete().Where(proxycredential.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &ProxyCredentialDeleteOne{builder}
+}
+
+// Query returns a query builder for ProxyCredential.
+func (c *ProxyCredentialClient) Query() *ProxyCredentialQuery {
+	return &ProxyCredentialQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeProxyCredential},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a ProxyCredential entity by its id.
+func (c *ProxyCredentialClient) Get(ctx context.Context, id int64) (*ProxyCredential, error) {
+	return c.Query().Where(proxycredential.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *ProxyCredentialClient) GetX(ctx context.Context, id int64) *ProxyCredential {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryRental queries the rental edge of a ProxyCredential.
+func (c *ProxyCredentialClient) QueryRental(_m *ProxyCredential) *ProxyRentalQuery {
+	query := (&ProxyRentalClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(proxycredential.Table, proxycredential.FieldID, id),
+			sqlgraph.To(proxyrental.Table, proxyrental.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, true, proxycredential.RentalTable, proxycredential.RentalColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *ProxyCredentialClient) Hooks() []Hook {
+	return c.hooks.ProxyCredential
+}
+
+// Interceptors returns the client interceptors.
+func (c *ProxyCredentialClient) Interceptors() []Interceptor {
+	return c.inters.ProxyCredential
+}
+
+func (c *ProxyCredentialClient) mutate(ctx context.Context, m *ProxyCredentialMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&ProxyCredentialCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&ProxyCredentialUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&ProxyCredentialUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&ProxyCredentialDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown ProxyCredential mutation op: %q", m.Op())
+	}
+}
+
+// ProxyNodeClient is a client for the ProxyNode schema.
+type ProxyNodeClient struct {
+	config
+}
+
+// NewProxyNodeClient returns a client for the ProxyNode from the given config.
+func NewProxyNodeClient(c config) *ProxyNodeClient {
+	return &ProxyNodeClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `proxynode.Hooks(f(g(h())))`.
+func (c *ProxyNodeClient) Use(hooks ...Hook) {
+	c.hooks.ProxyNode = append(c.hooks.ProxyNode, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `proxynode.Intercept(f(g(h())))`.
+func (c *ProxyNodeClient) Intercept(interceptors ...Interceptor) {
+	c.inters.ProxyNode = append(c.inters.ProxyNode, interceptors...)
+}
+
+// Create returns a builder for creating a ProxyNode entity.
+func (c *ProxyNodeClient) Create() *ProxyNodeCreate {
+	mutation := newProxyNodeMutation(c.config, OpCreate)
+	return &ProxyNodeCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of ProxyNode entities.
+func (c *ProxyNodeClient) CreateBulk(builders ...*ProxyNodeCreate) *ProxyNodeCreateBulk {
+	return &ProxyNodeCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *ProxyNodeClient) MapCreateBulk(slice any, setFunc func(*ProxyNodeCreate, int)) *ProxyNodeCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &ProxyNodeCreateBulk{err: fmt.Errorf("calling to ProxyNodeClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*ProxyNodeCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &ProxyNodeCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for ProxyNode.
+func (c *ProxyNodeClient) Update() *ProxyNodeUpdate {
+	mutation := newProxyNodeMutation(c.config, OpUpdate)
+	return &ProxyNodeUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *ProxyNodeClient) UpdateOne(_m *ProxyNode) *ProxyNodeUpdateOne {
+	mutation := newProxyNodeMutation(c.config, OpUpdateOne, withProxyNode(_m))
+	return &ProxyNodeUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *ProxyNodeClient) UpdateOneID(id int64) *ProxyNodeUpdateOne {
+	mutation := newProxyNodeMutation(c.config, OpUpdateOne, withProxyNodeID(id))
+	return &ProxyNodeUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for ProxyNode.
+func (c *ProxyNodeClient) Delete() *ProxyNodeDelete {
+	mutation := newProxyNodeMutation(c.config, OpDelete)
+	return &ProxyNodeDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *ProxyNodeClient) DeleteOne(_m *ProxyNode) *ProxyNodeDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *ProxyNodeClient) DeleteOneID(id int64) *ProxyNodeDeleteOne {
+	builder := c.Delete().Where(proxynode.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &ProxyNodeDeleteOne{builder}
+}
+
+// Query returns a query builder for ProxyNode.
+func (c *ProxyNodeClient) Query() *ProxyNodeQuery {
+	return &ProxyNodeQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeProxyNode},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a ProxyNode entity by its id.
+func (c *ProxyNodeClient) Get(ctx context.Context, id int64) (*ProxyNode, error) {
+	return c.Query().Where(proxynode.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *ProxyNodeClient) GetX(ctx context.Context, id int64) *ProxyNode {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryRentals queries the rentals edge of a ProxyNode.
+func (c *ProxyNodeClient) QueryRentals(_m *ProxyNode) *ProxyRentalQuery {
+	query := (&ProxyRentalClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(proxynode.Table, proxynode.FieldID, id),
+			sqlgraph.To(proxyrental.Table, proxyrental.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, proxynode.RentalsTable, proxynode.RentalsColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *ProxyNodeClient) Hooks() []Hook {
+	hooks := c.hooks.ProxyNode
+	return append(hooks[:len(hooks):len(hooks)], proxynode.Hooks[:]...)
+}
+
+// Interceptors returns the client interceptors.
+func (c *ProxyNodeClient) Interceptors() []Interceptor {
+	inters := c.inters.ProxyNode
+	return append(inters[:len(inters):len(inters)], proxynode.Interceptors[:]...)
+}
+
+func (c *ProxyNodeClient) mutate(ctx context.Context, m *ProxyNodeMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&ProxyNodeCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&ProxyNodeUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&ProxyNodeUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&ProxyNodeDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown ProxyNode mutation op: %q", m.Op())
+	}
+}
+
+// ProxyProductClient is a client for the ProxyProduct schema.
+type ProxyProductClient struct {
+	config
+}
+
+// NewProxyProductClient returns a client for the ProxyProduct from the given config.
+func NewProxyProductClient(c config) *ProxyProductClient {
+	return &ProxyProductClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `proxyproduct.Hooks(f(g(h())))`.
+func (c *ProxyProductClient) Use(hooks ...Hook) {
+	c.hooks.ProxyProduct = append(c.hooks.ProxyProduct, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `proxyproduct.Intercept(f(g(h())))`.
+func (c *ProxyProductClient) Intercept(interceptors ...Interceptor) {
+	c.inters.ProxyProduct = append(c.inters.ProxyProduct, interceptors...)
+}
+
+// Create returns a builder for creating a ProxyProduct entity.
+func (c *ProxyProductClient) Create() *ProxyProductCreate {
+	mutation := newProxyProductMutation(c.config, OpCreate)
+	return &ProxyProductCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of ProxyProduct entities.
+func (c *ProxyProductClient) CreateBulk(builders ...*ProxyProductCreate) *ProxyProductCreateBulk {
+	return &ProxyProductCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *ProxyProductClient) MapCreateBulk(slice any, setFunc func(*ProxyProductCreate, int)) *ProxyProductCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &ProxyProductCreateBulk{err: fmt.Errorf("calling to ProxyProductClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*ProxyProductCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &ProxyProductCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for ProxyProduct.
+func (c *ProxyProductClient) Update() *ProxyProductUpdate {
+	mutation := newProxyProductMutation(c.config, OpUpdate)
+	return &ProxyProductUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *ProxyProductClient) UpdateOne(_m *ProxyProduct) *ProxyProductUpdateOne {
+	mutation := newProxyProductMutation(c.config, OpUpdateOne, withProxyProduct(_m))
+	return &ProxyProductUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *ProxyProductClient) UpdateOneID(id int64) *ProxyProductUpdateOne {
+	mutation := newProxyProductMutation(c.config, OpUpdateOne, withProxyProductID(id))
+	return &ProxyProductUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for ProxyProduct.
+func (c *ProxyProductClient) Delete() *ProxyProductDelete {
+	mutation := newProxyProductMutation(c.config, OpDelete)
+	return &ProxyProductDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *ProxyProductClient) DeleteOne(_m *ProxyProduct) *ProxyProductDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *ProxyProductClient) DeleteOneID(id int64) *ProxyProductDeleteOne {
+	builder := c.Delete().Where(proxyproduct.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &ProxyProductDeleteOne{builder}
+}
+
+// Query returns a query builder for ProxyProduct.
+func (c *ProxyProductClient) Query() *ProxyProductQuery {
+	return &ProxyProductQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeProxyProduct},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a ProxyProduct entity by its id.
+func (c *ProxyProductClient) Get(ctx context.Context, id int64) (*ProxyProduct, error) {
+	return c.Query().Where(proxyproduct.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *ProxyProductClient) GetX(ctx context.Context, id int64) *ProxyProduct {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryRentals queries the rentals edge of a ProxyProduct.
+func (c *ProxyProductClient) QueryRentals(_m *ProxyProduct) *ProxyRentalQuery {
+	query := (&ProxyRentalClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(proxyproduct.Table, proxyproduct.FieldID, id),
+			sqlgraph.To(proxyrental.Table, proxyrental.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, proxyproduct.RentalsTable, proxyproduct.RentalsColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *ProxyProductClient) Hooks() []Hook {
+	return c.hooks.ProxyProduct
+}
+
+// Interceptors returns the client interceptors.
+func (c *ProxyProductClient) Interceptors() []Interceptor {
+	return c.inters.ProxyProduct
+}
+
+func (c *ProxyProductClient) mutate(ctx context.Context, m *ProxyProductMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&ProxyProductCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&ProxyProductUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&ProxyProductUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&ProxyProductDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown ProxyProduct mutation op: %q", m.Op())
+	}
+}
+
+// ProxyRentalClient is a client for the ProxyRental schema.
+type ProxyRentalClient struct {
+	config
+}
+
+// NewProxyRentalClient returns a client for the ProxyRental from the given config.
+func NewProxyRentalClient(c config) *ProxyRentalClient {
+	return &ProxyRentalClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `proxyrental.Hooks(f(g(h())))`.
+func (c *ProxyRentalClient) Use(hooks ...Hook) {
+	c.hooks.ProxyRental = append(c.hooks.ProxyRental, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `proxyrental.Intercept(f(g(h())))`.
+func (c *ProxyRentalClient) Intercept(interceptors ...Interceptor) {
+	c.inters.ProxyRental = append(c.inters.ProxyRental, interceptors...)
+}
+
+// Create returns a builder for creating a ProxyRental entity.
+func (c *ProxyRentalClient) Create() *ProxyRentalCreate {
+	mutation := newProxyRentalMutation(c.config, OpCreate)
+	return &ProxyRentalCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of ProxyRental entities.
+func (c *ProxyRentalClient) CreateBulk(builders ...*ProxyRentalCreate) *ProxyRentalCreateBulk {
+	return &ProxyRentalCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *ProxyRentalClient) MapCreateBulk(slice any, setFunc func(*ProxyRentalCreate, int)) *ProxyRentalCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &ProxyRentalCreateBulk{err: fmt.Errorf("calling to ProxyRentalClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*ProxyRentalCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &ProxyRentalCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for ProxyRental.
+func (c *ProxyRentalClient) Update() *ProxyRentalUpdate {
+	mutation := newProxyRentalMutation(c.config, OpUpdate)
+	return &ProxyRentalUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *ProxyRentalClient) UpdateOne(_m *ProxyRental) *ProxyRentalUpdateOne {
+	mutation := newProxyRentalMutation(c.config, OpUpdateOne, withProxyRental(_m))
+	return &ProxyRentalUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *ProxyRentalClient) UpdateOneID(id int64) *ProxyRentalUpdateOne {
+	mutation := newProxyRentalMutation(c.config, OpUpdateOne, withProxyRentalID(id))
+	return &ProxyRentalUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for ProxyRental.
+func (c *ProxyRentalClient) Delete() *ProxyRentalDelete {
+	mutation := newProxyRentalMutation(c.config, OpDelete)
+	return &ProxyRentalDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *ProxyRentalClient) DeleteOne(_m *ProxyRental) *ProxyRentalDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *ProxyRentalClient) DeleteOneID(id int64) *ProxyRentalDeleteOne {
+	builder := c.Delete().Where(proxyrental.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &ProxyRentalDeleteOne{builder}
+}
+
+// Query returns a query builder for ProxyRental.
+func (c *ProxyRentalClient) Query() *ProxyRentalQuery {
+	return &ProxyRentalQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeProxyRental},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a ProxyRental entity by its id.
+func (c *ProxyRentalClient) Get(ctx context.Context, id int64) (*ProxyRental, error) {
+	return c.Query().Where(proxyrental.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *ProxyRentalClient) GetX(ctx context.Context, id int64) *ProxyRental {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryUser queries the user edge of a ProxyRental.
+func (c *ProxyRentalClient) QueryUser(_m *ProxyRental) *UserQuery {
+	query := (&UserClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(proxyrental.Table, proxyrental.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, proxyrental.UserTable, proxyrental.UserColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryNode queries the node edge of a ProxyRental.
+func (c *ProxyRentalClient) QueryNode(_m *ProxyRental) *ProxyNodeQuery {
+	query := (&ProxyNodeClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(proxyrental.Table, proxyrental.FieldID, id),
+			sqlgraph.To(proxynode.Table, proxynode.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, proxyrental.NodeTable, proxyrental.NodeColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryProduct queries the product edge of a ProxyRental.
+func (c *ProxyRentalClient) QueryProduct(_m *ProxyRental) *ProxyProductQuery {
+	query := (&ProxyProductClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(proxyrental.Table, proxyrental.FieldID, id),
+			sqlgraph.To(proxyproduct.Table, proxyproduct.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, proxyrental.ProductTable, proxyrental.ProductColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryCredential queries the credential edge of a ProxyRental.
+func (c *ProxyRentalClient) QueryCredential(_m *ProxyRental) *ProxyCredentialQuery {
+	query := (&ProxyCredentialClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(proxyrental.Table, proxyrental.FieldID, id),
+			sqlgraph.To(proxycredential.Table, proxycredential.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, proxyrental.CredentialTable, proxyrental.CredentialColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryTrafficLogs queries the traffic_logs edge of a ProxyRental.
+func (c *ProxyRentalClient) QueryTrafficLogs(_m *ProxyRental) *ProxyTrafficLogQuery {
+	query := (&ProxyTrafficLogClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(proxyrental.Table, proxyrental.FieldID, id),
+			sqlgraph.To(proxytrafficlog.Table, proxytrafficlog.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, proxyrental.TrafficLogsTable, proxyrental.TrafficLogsColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *ProxyRentalClient) Hooks() []Hook {
+	return c.hooks.ProxyRental
+}
+
+// Interceptors returns the client interceptors.
+func (c *ProxyRentalClient) Interceptors() []Interceptor {
+	return c.inters.ProxyRental
+}
+
+func (c *ProxyRentalClient) mutate(ctx context.Context, m *ProxyRentalMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&ProxyRentalCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&ProxyRentalUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&ProxyRentalUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&ProxyRentalDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown ProxyRental mutation op: %q", m.Op())
+	}
+}
+
+// ProxyTrafficLogClient is a client for the ProxyTrafficLog schema.
+type ProxyTrafficLogClient struct {
+	config
+}
+
+// NewProxyTrafficLogClient returns a client for the ProxyTrafficLog from the given config.
+func NewProxyTrafficLogClient(c config) *ProxyTrafficLogClient {
+	return &ProxyTrafficLogClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `proxytrafficlog.Hooks(f(g(h())))`.
+func (c *ProxyTrafficLogClient) Use(hooks ...Hook) {
+	c.hooks.ProxyTrafficLog = append(c.hooks.ProxyTrafficLog, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `proxytrafficlog.Intercept(f(g(h())))`.
+func (c *ProxyTrafficLogClient) Intercept(interceptors ...Interceptor) {
+	c.inters.ProxyTrafficLog = append(c.inters.ProxyTrafficLog, interceptors...)
+}
+
+// Create returns a builder for creating a ProxyTrafficLog entity.
+func (c *ProxyTrafficLogClient) Create() *ProxyTrafficLogCreate {
+	mutation := newProxyTrafficLogMutation(c.config, OpCreate)
+	return &ProxyTrafficLogCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of ProxyTrafficLog entities.
+func (c *ProxyTrafficLogClient) CreateBulk(builders ...*ProxyTrafficLogCreate) *ProxyTrafficLogCreateBulk {
+	return &ProxyTrafficLogCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *ProxyTrafficLogClient) MapCreateBulk(slice any, setFunc func(*ProxyTrafficLogCreate, int)) *ProxyTrafficLogCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &ProxyTrafficLogCreateBulk{err: fmt.Errorf("calling to ProxyTrafficLogClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*ProxyTrafficLogCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &ProxyTrafficLogCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for ProxyTrafficLog.
+func (c *ProxyTrafficLogClient) Update() *ProxyTrafficLogUpdate {
+	mutation := newProxyTrafficLogMutation(c.config, OpUpdate)
+	return &ProxyTrafficLogUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *ProxyTrafficLogClient) UpdateOne(_m *ProxyTrafficLog) *ProxyTrafficLogUpdateOne {
+	mutation := newProxyTrafficLogMutation(c.config, OpUpdateOne, withProxyTrafficLog(_m))
+	return &ProxyTrafficLogUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *ProxyTrafficLogClient) UpdateOneID(id int64) *ProxyTrafficLogUpdateOne {
+	mutation := newProxyTrafficLogMutation(c.config, OpUpdateOne, withProxyTrafficLogID(id))
+	return &ProxyTrafficLogUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for ProxyTrafficLog.
+func (c *ProxyTrafficLogClient) Delete() *ProxyTrafficLogDelete {
+	mutation := newProxyTrafficLogMutation(c.config, OpDelete)
+	return &ProxyTrafficLogDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *ProxyTrafficLogClient) DeleteOne(_m *ProxyTrafficLog) *ProxyTrafficLogDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *ProxyTrafficLogClient) DeleteOneID(id int64) *ProxyTrafficLogDeleteOne {
+	builder := c.Delete().Where(proxytrafficlog.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &ProxyTrafficLogDeleteOne{builder}
+}
+
+// Query returns a query builder for ProxyTrafficLog.
+func (c *ProxyTrafficLogClient) Query() *ProxyTrafficLogQuery {
+	return &ProxyTrafficLogQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeProxyTrafficLog},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a ProxyTrafficLog entity by its id.
+func (c *ProxyTrafficLogClient) Get(ctx context.Context, id int64) (*ProxyTrafficLog, error) {
+	return c.Query().Where(proxytrafficlog.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *ProxyTrafficLogClient) GetX(ctx context.Context, id int64) *ProxyTrafficLog {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryRental queries the rental edge of a ProxyTrafficLog.
+func (c *ProxyTrafficLogClient) QueryRental(_m *ProxyTrafficLog) *ProxyRentalQuery {
+	query := (&ProxyRentalClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(proxytrafficlog.Table, proxytrafficlog.FieldID, id),
+			sqlgraph.To(proxyrental.Table, proxyrental.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, proxytrafficlog.RentalTable, proxytrafficlog.RentalColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryOperator queries the operator edge of a ProxyTrafficLog.
+func (c *ProxyTrafficLogClient) QueryOperator(_m *ProxyTrafficLog) *UserQuery {
+	query := (&UserClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(proxytrafficlog.Table, proxytrafficlog.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, proxytrafficlog.OperatorTable, proxytrafficlog.OperatorColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *ProxyTrafficLogClient) Hooks() []Hook {
+	return c.hooks.ProxyTrafficLog
+}
+
+// Interceptors returns the client interceptors.
+func (c *ProxyTrafficLogClient) Interceptors() []Interceptor {
+	return c.inters.ProxyTrafficLog
+}
+
+func (c *ProxyTrafficLogClient) mutate(ctx context.Context, m *ProxyTrafficLogMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&ProxyTrafficLogCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&ProxyTrafficLogUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&ProxyTrafficLogUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&ProxyTrafficLogDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown ProxyTrafficLog mutation op: %q", m.Op())
+	}
+}
+
 // RedeemCodeClient is a client for the RedeemCode schema.
 type RedeemCodeClient struct {
 	config
@@ -2827,6 +3696,38 @@ func (c *UserClient) QueryPaymentOrders(_m *User) *PaymentOrderQuery {
 	return query
 }
 
+// QueryProxyRentals queries the proxy_rentals edge of a User.
+func (c *UserClient) QueryProxyRentals(_m *User) *ProxyRentalQuery {
+	query := (&ProxyRentalClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, id),
+			sqlgraph.To(proxyrental.Table, proxyrental.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.ProxyRentalsTable, user.ProxyRentalsColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryProxyTrafficLogs queries the proxy_traffic_logs edge of a User.
+func (c *UserClient) QueryProxyTrafficLogs(_m *User) *ProxyTrafficLogQuery {
+	query := (&ProxyTrafficLogClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, id),
+			sqlgraph.To(proxytrafficlog.Table, proxytrafficlog.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.ProxyTrafficLogsTable, user.ProxyTrafficLogsColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // QueryUserAllowedGroups queries the user_allowed_groups edge of a User.
 func (c *UserClient) QueryUserAllowedGroups(_m *User) *UserAllowedGroupQuery {
 	query := (&UserAllowedGroupClient{config: c.config}).Query()
@@ -3490,14 +4391,16 @@ type (
 	hooks struct {
 		Announcement, AnnouncementRead, Group, IdempotencyRecord, PaymentAuditLog,
 		PaymentChannel, PaymentOrder, PaymentProviderInstance, PromoCode,
-		PromoCodeUsage, RedeemCode, SecuritySecret, Setting, SubscriptionPlan, User,
+		PromoCodeUsage, ProxyCredential, ProxyNode, ProxyProduct, ProxyRental,
+		ProxyTrafficLog, RedeemCode, SecuritySecret, Setting, SubscriptionPlan, User,
 		UserAllowedGroup, UserAttributeDefinition, UserAttributeValue,
 		UserSubscription []ent.Hook
 	}
 	inters struct {
 		Announcement, AnnouncementRead, Group, IdempotencyRecord, PaymentAuditLog,
 		PaymentChannel, PaymentOrder, PaymentProviderInstance, PromoCode,
-		PromoCodeUsage, RedeemCode, SecuritySecret, Setting, SubscriptionPlan, User,
+		PromoCodeUsage, ProxyCredential, ProxyNode, ProxyProduct, ProxyRental,
+		ProxyTrafficLog, RedeemCode, SecuritySecret, Setting, SubscriptionPlan, User,
 		UserAllowedGroup, UserAttributeDefinition, UserAttributeValue,
 		UserSubscription []ent.Interceptor
 	}

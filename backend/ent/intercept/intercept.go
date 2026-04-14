@@ -19,6 +19,11 @@ import (
 	"github.com/meitianwang/fast-frame/ent/predicate"
 	"github.com/meitianwang/fast-frame/ent/promocode"
 	"github.com/meitianwang/fast-frame/ent/promocodeusage"
+	"github.com/meitianwang/fast-frame/ent/proxycredential"
+	"github.com/meitianwang/fast-frame/ent/proxynode"
+	"github.com/meitianwang/fast-frame/ent/proxyproduct"
+	"github.com/meitianwang/fast-frame/ent/proxyrental"
+	"github.com/meitianwang/fast-frame/ent/proxytrafficlog"
 	"github.com/meitianwang/fast-frame/ent/redeemcode"
 	"github.com/meitianwang/fast-frame/ent/securitysecret"
 	"github.com/meitianwang/fast-frame/ent/setting"
@@ -356,6 +361,141 @@ func (f TraversePromoCodeUsage) Traverse(ctx context.Context, q ent.Query) error
 	return fmt.Errorf("unexpected query type %T. expect *ent.PromoCodeUsageQuery", q)
 }
 
+// The ProxyCredentialFunc type is an adapter to allow the use of ordinary function as a Querier.
+type ProxyCredentialFunc func(context.Context, *ent.ProxyCredentialQuery) (ent.Value, error)
+
+// Query calls f(ctx, q).
+func (f ProxyCredentialFunc) Query(ctx context.Context, q ent.Query) (ent.Value, error) {
+	if q, ok := q.(*ent.ProxyCredentialQuery); ok {
+		return f(ctx, q)
+	}
+	return nil, fmt.Errorf("unexpected query type %T. expect *ent.ProxyCredentialQuery", q)
+}
+
+// The TraverseProxyCredential type is an adapter to allow the use of ordinary function as Traverser.
+type TraverseProxyCredential func(context.Context, *ent.ProxyCredentialQuery) error
+
+// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
+func (f TraverseProxyCredential) Intercept(next ent.Querier) ent.Querier {
+	return next
+}
+
+// Traverse calls f(ctx, q).
+func (f TraverseProxyCredential) Traverse(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.ProxyCredentialQuery); ok {
+		return f(ctx, q)
+	}
+	return fmt.Errorf("unexpected query type %T. expect *ent.ProxyCredentialQuery", q)
+}
+
+// The ProxyNodeFunc type is an adapter to allow the use of ordinary function as a Querier.
+type ProxyNodeFunc func(context.Context, *ent.ProxyNodeQuery) (ent.Value, error)
+
+// Query calls f(ctx, q).
+func (f ProxyNodeFunc) Query(ctx context.Context, q ent.Query) (ent.Value, error) {
+	if q, ok := q.(*ent.ProxyNodeQuery); ok {
+		return f(ctx, q)
+	}
+	return nil, fmt.Errorf("unexpected query type %T. expect *ent.ProxyNodeQuery", q)
+}
+
+// The TraverseProxyNode type is an adapter to allow the use of ordinary function as Traverser.
+type TraverseProxyNode func(context.Context, *ent.ProxyNodeQuery) error
+
+// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
+func (f TraverseProxyNode) Intercept(next ent.Querier) ent.Querier {
+	return next
+}
+
+// Traverse calls f(ctx, q).
+func (f TraverseProxyNode) Traverse(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.ProxyNodeQuery); ok {
+		return f(ctx, q)
+	}
+	return fmt.Errorf("unexpected query type %T. expect *ent.ProxyNodeQuery", q)
+}
+
+// The ProxyProductFunc type is an adapter to allow the use of ordinary function as a Querier.
+type ProxyProductFunc func(context.Context, *ent.ProxyProductQuery) (ent.Value, error)
+
+// Query calls f(ctx, q).
+func (f ProxyProductFunc) Query(ctx context.Context, q ent.Query) (ent.Value, error) {
+	if q, ok := q.(*ent.ProxyProductQuery); ok {
+		return f(ctx, q)
+	}
+	return nil, fmt.Errorf("unexpected query type %T. expect *ent.ProxyProductQuery", q)
+}
+
+// The TraverseProxyProduct type is an adapter to allow the use of ordinary function as Traverser.
+type TraverseProxyProduct func(context.Context, *ent.ProxyProductQuery) error
+
+// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
+func (f TraverseProxyProduct) Intercept(next ent.Querier) ent.Querier {
+	return next
+}
+
+// Traverse calls f(ctx, q).
+func (f TraverseProxyProduct) Traverse(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.ProxyProductQuery); ok {
+		return f(ctx, q)
+	}
+	return fmt.Errorf("unexpected query type %T. expect *ent.ProxyProductQuery", q)
+}
+
+// The ProxyRentalFunc type is an adapter to allow the use of ordinary function as a Querier.
+type ProxyRentalFunc func(context.Context, *ent.ProxyRentalQuery) (ent.Value, error)
+
+// Query calls f(ctx, q).
+func (f ProxyRentalFunc) Query(ctx context.Context, q ent.Query) (ent.Value, error) {
+	if q, ok := q.(*ent.ProxyRentalQuery); ok {
+		return f(ctx, q)
+	}
+	return nil, fmt.Errorf("unexpected query type %T. expect *ent.ProxyRentalQuery", q)
+}
+
+// The TraverseProxyRental type is an adapter to allow the use of ordinary function as Traverser.
+type TraverseProxyRental func(context.Context, *ent.ProxyRentalQuery) error
+
+// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
+func (f TraverseProxyRental) Intercept(next ent.Querier) ent.Querier {
+	return next
+}
+
+// Traverse calls f(ctx, q).
+func (f TraverseProxyRental) Traverse(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.ProxyRentalQuery); ok {
+		return f(ctx, q)
+	}
+	return fmt.Errorf("unexpected query type %T. expect *ent.ProxyRentalQuery", q)
+}
+
+// The ProxyTrafficLogFunc type is an adapter to allow the use of ordinary function as a Querier.
+type ProxyTrafficLogFunc func(context.Context, *ent.ProxyTrafficLogQuery) (ent.Value, error)
+
+// Query calls f(ctx, q).
+func (f ProxyTrafficLogFunc) Query(ctx context.Context, q ent.Query) (ent.Value, error) {
+	if q, ok := q.(*ent.ProxyTrafficLogQuery); ok {
+		return f(ctx, q)
+	}
+	return nil, fmt.Errorf("unexpected query type %T. expect *ent.ProxyTrafficLogQuery", q)
+}
+
+// The TraverseProxyTrafficLog type is an adapter to allow the use of ordinary function as Traverser.
+type TraverseProxyTrafficLog func(context.Context, *ent.ProxyTrafficLogQuery) error
+
+// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
+func (f TraverseProxyTrafficLog) Intercept(next ent.Querier) ent.Querier {
+	return next
+}
+
+// Traverse calls f(ctx, q).
+func (f TraverseProxyTrafficLog) Traverse(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.ProxyTrafficLogQuery); ok {
+		return f(ctx, q)
+	}
+	return fmt.Errorf("unexpected query type %T. expect *ent.ProxyTrafficLogQuery", q)
+}
+
 // The RedeemCodeFunc type is an adapter to allow the use of ordinary function as a Querier.
 type RedeemCodeFunc func(context.Context, *ent.RedeemCodeQuery) (ent.Value, error)
 
@@ -622,6 +762,16 @@ func NewQuery(q ent.Query) (Query, error) {
 		return &query[*ent.PromoCodeQuery, predicate.PromoCode, promocode.OrderOption]{typ: ent.TypePromoCode, tq: q}, nil
 	case *ent.PromoCodeUsageQuery:
 		return &query[*ent.PromoCodeUsageQuery, predicate.PromoCodeUsage, promocodeusage.OrderOption]{typ: ent.TypePromoCodeUsage, tq: q}, nil
+	case *ent.ProxyCredentialQuery:
+		return &query[*ent.ProxyCredentialQuery, predicate.ProxyCredential, proxycredential.OrderOption]{typ: ent.TypeProxyCredential, tq: q}, nil
+	case *ent.ProxyNodeQuery:
+		return &query[*ent.ProxyNodeQuery, predicate.ProxyNode, proxynode.OrderOption]{typ: ent.TypeProxyNode, tq: q}, nil
+	case *ent.ProxyProductQuery:
+		return &query[*ent.ProxyProductQuery, predicate.ProxyProduct, proxyproduct.OrderOption]{typ: ent.TypeProxyProduct, tq: q}, nil
+	case *ent.ProxyRentalQuery:
+		return &query[*ent.ProxyRentalQuery, predicate.ProxyRental, proxyrental.OrderOption]{typ: ent.TypeProxyRental, tq: q}, nil
+	case *ent.ProxyTrafficLogQuery:
+		return &query[*ent.ProxyTrafficLogQuery, predicate.ProxyTrafficLog, proxytrafficlog.OrderOption]{typ: ent.TypeProxyTrafficLog, tq: q}, nil
 	case *ent.RedeemCodeQuery:
 		return &query[*ent.RedeemCodeQuery, predicate.RedeemCode, redeemcode.OrderOption]{typ: ent.TypeRedeemCode, tq: q}, nil
 	case *ent.SecuritySecretQuery:

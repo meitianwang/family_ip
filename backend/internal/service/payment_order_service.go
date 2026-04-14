@@ -482,6 +482,12 @@ type PaymentOrderService struct {
 	entClient           *dbent.Client
 	redeemService       *RedeemService
 	subscriptionService *SubscriptionService
+	proxyService        *ProxyService
+}
+
+// SetProxyService wires the proxy service for rental fulfillment.
+func (s *PaymentOrderService) SetProxyService(ps *ProxyService) {
+	s.proxyService = ps
 }
 
 // NewPaymentOrderService creates a new PaymentOrderService.
@@ -1328,16 +1334,25 @@ func (s *PaymentOrderService) GetDashboardStats(ctx context.Context, days int) (
 
 // --- Internal helpers ---
 
-// fulfillOrder dispatches balance recharge or subscription assignment.
+// fulfillOrder dispatches balance recharge, subscription assignment, or proxy rental activation.
 func (s *PaymentOrderService) fulfillOrder(ctx context.Context, order *PaymentOrder) error {
 	switch order.OrderType {
 	case domain.PaymentOrderTypeBalance:
 		return s.fulfillBalanceOrder(ctx, order)
 	case domain.PaymentOrderTypeSubscription:
 		return s.fulfillSubscriptionOrder(ctx, order)
+	case domain.PaymentOrderTypeProxyRental:
+		return s.fulfillProxyRentalOrder(ctx, order)
 	default:
 		return fmt.Errorf("unknown order type: %s", order.OrderType)
 	}
+}
+
+func (s *PaymentOrderService) fulfillProxyRentalOrder(ctx context.Context, order *PaymentOrder) error {
+	if s.proxyService == nil {
+		return fmt.Errorf("proxy service not configured")
+	}
+	return s.proxyService.ActivateByPaymentOrder(ctx, order.ID)
 }
 
 func (s *PaymentOrderService) fulfillBalanceOrder(ctx context.Context, order *PaymentOrder) error {
